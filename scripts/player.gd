@@ -7,8 +7,8 @@ const CHUNK_SIZE := 4
 const SPEED := 120.0
 const GRAVITY := 600.0
 const JUMP_VELOCITY := -250.0
-const HITBOX_W := 16.0
-const HITBOX_H := 28.0
+const HITBOX_W := 20.0
+const HITBOX_H := 34.0
 
 var velocity := Vector2.ZERO
 var chunk_grid: ChunkGrid
@@ -20,6 +20,7 @@ var _facing_right := true
 
 
 func _ready() -> void:
+	scale = Vector2(1.5, 1.5)
 	_idle_sprite = Sprite2D.new()
 	_idle_sprite.texture = load("res://assets/character/idle.png")
 	_idle_sprite.hframes = 2
