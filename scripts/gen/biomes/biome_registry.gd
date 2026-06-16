@@ -11,6 +11,7 @@ func _init() -> void:
 	_biomes["forest_surface"] = ForestSurfaceBiome.new()
 	_biomes["forest_lake"] = ForestLakeBiome.new()
 	_biomes["cave"] = CaveBiome.new()
+	_biomes["desert"] = DesertBiome.new()
 
 
 func get_biome(biome_name: String) -> GenerationPlugin:
