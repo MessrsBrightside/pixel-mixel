@@ -7,5 +7,6 @@ godot --headless --script tests/test_chunk_simulator.gd
 godot --headless --script tests/test_chunk_renderer.gd
 godot --headless --script tests/test_generation_plugins.gd
 godot --headless --script tests/test_integration.gd
+godot --headless --script tests/test_player.gd
 godot --headless --script tests/test_snapshot.gd
 echo 'ALL TESTS PASSED'

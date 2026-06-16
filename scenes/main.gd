@@ -11,7 +11,7 @@ var _settling: bool = false
 var _ticks_per_frame: int = 50
 var _label: Label
 var _total_ticks: int = 0
-var _character: Sprite2D
+var _player: Player
 var _camera: Camera2D
 
 # Presets: each is [seed, params_dict]
@@ -27,16 +27,12 @@ var _presets: Array = [
 func _ready() -> void:
 	_renderer = ChunkRenderer.new()
 	add_child(_renderer)
-	_character = Sprite2D.new()
-	var tex := load("res://assets/character/idle.png")
-	_character.texture = tex
-	_character.hframes = 2
-	_character.frame = 0
-	_character.z_index = 1
-	add_child(_character)
+	_player = Player.new()
+	_player.z_index = 1
+	add_child(_player)
 	_camera = Camera2D.new()
 	_camera.zoom = Vector2(2, 2)
-	_character.add_child(_camera)
+	_player.add_child(_camera)
 	_label = Label.new()
 	_label.position = Vector2(4, 4)
 	_label.add_theme_color_override("font_color", Color.WHITE)
@@ -104,24 +100,18 @@ func _generate(seed_val: int, params: Dictionary = {}) -> void:
 	_settling = true
 	_total_ticks = 0
 	_update_label("settling... (seed %d)" % seed_val)
-	_place_character()
+	_place_player()
 
 
 func _update_label(status: String) -> void:
 	_label.text = "%s | ticks/frame: %d (UP/DOWN)" % [status, _ticks_per_frame]
 
 
-func _place_character() -> void:
-	var size := _grid.get_size()
-	var cx: int = size.x / 2
-	for y in range(size.y):
-		var chunk: Dictionary = _grid.get_chunk(Vector2i(cx, y))
-		if chunk.terrain != 0:
-			var px: float = cx * 4.0
-			var py: float = y * 4.0
-			_character.position = Vector2(px, py)
-			_character.offset = Vector2(0, -_character.texture.get_height() / _character.hframes)
-			break
+func _place_player() -> void:
+	_player.chunk_grid = _grid
+	_player.position = _player.find_spawn_position()
+	_player.velocity = Vector2.ZERO
+	_player.on_ground = false
 
 
 func _load_terrain_defs() -> Array[TerrainDef]:
