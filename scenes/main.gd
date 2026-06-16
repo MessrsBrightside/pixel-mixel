@@ -13,6 +13,7 @@ var _label: Label
 var _total_ticks: int = 0
 var _player: Player
 var _camera: Camera2D
+var _parallax_bg: ParallaxBG
 
 # Presets: each is [seed, params_dict]
 var _presets: Array = [
@@ -25,6 +26,8 @@ var _presets: Array = [
 
 
 func _ready() -> void:
+	_parallax_bg = ParallaxBG.new()
+	add_child(_parallax_bg)
 	_renderer = ChunkRenderer.new()
 	add_child(_renderer)
 	_player = Player.new()
@@ -95,6 +98,7 @@ func _generate_biome(biome_name: String, seed_val: int) -> void:
 	_total_ticks = 0
 	_update_label("biome: %s (seed %d)" % [biome_name, seed_val])
 	_place_player()
+	_parallax_bg.setup(biome_name)
 
 
 func _generate(seed_val: int, params: Dictionary = {}) -> void:
@@ -120,6 +124,7 @@ func _generate(seed_val: int, params: Dictionary = {}) -> void:
 	_total_ticks = 0
 	_update_label("settling... (seed %d)" % seed_val)
 	_place_player()
+	_parallax_bg.setup("default")
 
 
 func _update_label(status: String) -> void:
