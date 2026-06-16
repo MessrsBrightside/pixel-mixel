@@ -11,6 +11,7 @@ var _settling: bool = false
 var _ticks_per_frame: int = 50
 var _label: Label
 var _total_ticks: int = 0
+var _character: Sprite2D
 
 # Presets: each is [seed, params_dict]
 var _presets: Array = [
@@ -25,10 +26,16 @@ var _presets: Array = [
 func _ready() -> void:
 	_renderer = ChunkRenderer.new()
 	add_child(_renderer)
+	_character = Sprite2D.new()
+	_character.texture = load("res://assets/character/character_robot_idle.png")
+	_character.scale = Vector2(0.25, 0.25)
+	_character.z_index = 1
+	add_child(_character)
 	_label = Label.new()
 	_label.position = Vector2(4, 4)
 	_label.add_theme_color_override("font_color", Color.WHITE)
 	_label.add_theme_font_size_override("font_size", 12)
+	_label.z_index = 2
 	add_child(_label)
 	_generate_preset(0)
 
@@ -91,10 +98,27 @@ func _generate(seed_val: int, params: Dictionary = {}) -> void:
 	_settling = true
 	_total_ticks = 0
 	_update_label("settling... (seed %d)" % seed_val)
+	_place_character()
 
 
 func _update_label(status: String) -> void:
 	_label.text = "%s | ticks/frame: %d (UP/DOWN)" % [status, _ticks_per_frame]
+
+
+func _place_character() -> void:
+	# Place at center of world, on the surface
+	var size := _grid.get_size()
+	var cx: int = size.x / 2
+	# Find surface (first non-empty chunk from top)
+	for y in range(size.y):
+		var chunk: Dictionary = _grid.get_chunk(Vector2i(cx, y))
+		if chunk.terrain != 0:
+			# Position character feet at this surface
+			var px: float = cx * 4.0
+			var py: float = y * 4.0
+			_character.position = Vector2(px, py)
+			_character.offset = Vector2(-_character.texture.get_width() / 2.0, -_character.texture.get_height())
+			break
 
 
 func _load_terrain_defs() -> Array[TerrainDef]:
