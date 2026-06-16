@@ -8,23 +8,35 @@ var grid: ChunkGrid
 var terrain_defs: Array[TerrainDef]
 
 var _sprite: Sprite2D
+var _fg_sprite: Sprite2D
 
 
 func _ready() -> void:
 	_sprite = Sprite2D.new()
 	_sprite.centered = false
 	add_child(_sprite)
+	_fg_sprite = Sprite2D.new()
+	_fg_sprite.centered = false
+	_fg_sprite.z_index = 2
+	add_child(_fg_sprite)
 
 
 func render() -> void:
-	var tex := ImageTexture.create_from_image(render_to_image())
-	_sprite.texture = tex
+	var images := render_to_images()
+	_sprite.texture = ImageTexture.create_from_image(images[0])
+	_fg_sprite.texture = ImageTexture.create_from_image(images[1])
 
 
 func render_to_image() -> Image:
+	return render_to_images()[0]
+
+
+func render_to_images() -> Array[Image]:
 	var size := grid.get_size()
-	var img := Image.create(size.x * CHUNK_PX, size.y * CHUNK_PX, false, Image.FORMAT_RGBA8)
-	img.fill(Color(0, 0, 0, 0))
+	var bg_img := Image.create(size.x * CHUNK_PX, size.y * CHUNK_PX, false, Image.FORMAT_RGBA8)
+	var fg_img := Image.create(size.x * CHUNK_PX, size.y * CHUNK_PX, false, Image.FORMAT_RGBA8)
+	bg_img.fill(Color(0, 0, 0, 0))
+	fg_img.fill(Color(0, 0, 0, 0))
 
 	for y in range(size.y):
 		for x in range(size.x):
@@ -42,12 +54,13 @@ func render_to_image() -> Image:
 
 			var px := x * CHUNK_PX
 			var py := y * CHUNK_PX
+			var img: Image = fg_img if tdef.foreground else bg_img
 			img.fill_rect(Rect2i(px, py, CHUNK_PX, CHUNK_PX), color)
 
 			if state == ChunkGrid.State.STATIC:
 				_draw_borders(img, Vector2i(x, y), px, py, terrain)
 
-	return img
+	return [bg_img, fg_img]
 
 
 func update_region(_rect: Rect2i) -> void:

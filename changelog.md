@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#41] Grass dual-layer: grass_solid (index 10, non-passable) as surface base, decorative grass (index 4) renders in front of player via two-pass renderer with foreground z-ordering
+
 - [#42] Safe spawn point: scan outward from center, check solid ground + clear air + no underwater, cave fallback
 
 - [#40] Run ChunkSimulator after biome generation so sand sinks through water; new tests for settled state

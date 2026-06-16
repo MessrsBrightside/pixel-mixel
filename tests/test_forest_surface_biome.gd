@@ -37,12 +37,12 @@ func _init() -> void:
 		failed += 1
 		print("FAIL: non-deterministic output")
 
-	# Test: grass layer present on surface
+	# Test: grass layer present on surface (grass_solid or decorative grass)
 	var grass_count := 0
 	for x in range(500):
 		for y in range(144):
 			var chunk = grid.get_chunk(Vector2i(x, y))
-			if chunk.terrain == 4:
+			if chunk.terrain == 4 or chunk.terrain == 10:
 				grass_count += 1
 				break
 	if grass_count > 400:
@@ -74,7 +74,7 @@ func _init() -> void:
 	for y in range(144):
 		for x in range(500):
 			var chunk = grid.get_chunk(Vector2i(x, y))
-			if chunk.terrain in [4, 5, 6]:  # grass, leaves, wood
+			if chunk.terrain in [4, 5, 6]:  # grass (decorative), leaves, wood
 				if chunk.state != ChunkGrid.State.STATIC:
 					veg_not_static += 1
 	if veg_not_static == 0:

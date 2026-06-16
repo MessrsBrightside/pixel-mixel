@@ -34,7 +34,7 @@ func _init() -> void:
 
 func _load_terrain_defs() -> Array[TerrainDef]:
 	var defs: Array[TerrainDef] = []
-	defs.resize(10)
+	defs.resize(11)
 	defs[0] = null
 	defs[1] = load("res://resources/dirt.tres")
 	defs[2] = load("res://resources/stone.tres")
@@ -45,4 +45,5 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 	defs[7] = load("res://resources/sand.tres")
 	defs[8] = load("res://resources/mushroom.tres")
 	defs[9] = load("res://resources/cactus.tres")
+	defs[10] = load("res://resources/grass_solid.tres")
 	return defs

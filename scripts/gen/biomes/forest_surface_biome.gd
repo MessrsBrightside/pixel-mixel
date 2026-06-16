@@ -8,6 +8,7 @@ const STONE := 2
 const GRASS := 4
 const LEAVES := 5
 const WOOD := 6
+const GRASS_SOLID := 10
 
 
 func execute(grid: ChunkGrid, params: Dictionary) -> void:
@@ -27,13 +28,13 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 	# Fill terrain layers
 	for x in range(size.x):
 		var sy: int = surface[x]
-		# Grass top layer (2-3 chunks)
-		var grass_depth := 2 + (x % 2)
-		for y in range(sy, mini(sy + grass_depth, size.y)):
-			grid.set_chunk(Vector2i(x, y), GRASS, 0, ChunkGrid.State.STATIC)
+		# Grass solid base (top 2 chunks — player stands on this)
+		var solid_depth := 2
+		for y in range(sy, mini(sy + solid_depth, size.y)):
+			grid.set_chunk(Vector2i(x, y), GRASS_SOLID, 0, ChunkGrid.State.STATIC)
 		# Dirt layer (~13 chunks)
-		var dirt_start := sy + grass_depth
-		var dirt_end := sy + grass_depth + 13
+		var dirt_start := sy + solid_depth
+		var dirt_end := sy + solid_depth + 13
 		for y in range(dirt_start, mini(dirt_end, size.y)):
 			grid.set_chunk(Vector2i(x, y), DIRT, 0, ChunkGrid.State.STATIC)
 		# Stone to bottom
@@ -49,17 +50,15 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 			_place_maple(grid, next_tree_x, surface[next_tree_x], rng)
 		next_tree_x += rng.randi_range(15, 25)
 
-	# Scatter grass blades on surface between trees
+	# Scatter decorative grass blades above solid grass surface
 	for x in range(size.x):
-		var chunk: Variant = grid.get_chunk(Vector2i(x, surface[x]))
-		if chunk != null and chunk.terrain == GRASS:
-			if rng.randf() < 0.3:
-				var blade_h := rng.randi_range(1, 2)
-				for i in range(blade_h):
-					var gy: int = surface[x] - 1 - i
-					var above: Variant = grid.get_chunk(Vector2i(x, gy))
-					if gy >= 0 and above != null and above.terrain == 0:
-						grid.set_chunk(Vector2i(x, gy), GRASS, 0, ChunkGrid.State.STATIC)
+		if rng.randf() < 0.3:
+			var blade_h := rng.randi_range(1, 2)
+			for i in range(blade_h):
+				var gy: int = surface[x] - 1 - i
+				var above: Variant = grid.get_chunk(Vector2i(x, gy))
+				if gy >= 0 and above != null and above.terrain == 0:
+					grid.set_chunk(Vector2i(x, gy), GRASS, 0, ChunkGrid.State.STATIC)
 
 
 func _place_evergreen(grid: ChunkGrid, x: int, surface_y: int, rng: RandomNumberGenerator) -> void:

@@ -103,13 +103,13 @@ func _init() -> void:
 		failed += 1
 		print("FAIL: %d tree chunks not STATIC" % tree_not_static)
 
-	# Test: grass exists and is STATIC
+	# Test: grass exists and is STATIC (decorative grass=4 or grass_solid=10)
 	var grass_count := 0
 	var grass_not_static := 0
 	for y in range(144):
 		for x in range(500):
 			var chunk = grid.get_chunk(Vector2i(x, y))
-			if chunk.terrain == 4:  # grass
+			if chunk.terrain == 4 or chunk.terrain == 10:
 				grass_count += 1
 				if chunk.state != ChunkGrid.State.STATIC:
 					grass_not_static += 1
