@@ -114,7 +114,7 @@ func _init() -> void:
 			var surface_y: int = heights[x]
 			for y in range(surface_y):
 				var chunk = grid_d.get_chunk(Vector2i(x, y))
-				if chunk.terrain != 0 and chunk.state != ChunkGrid.State.LIQUID:
+				if chunk.terrain != 0 and chunk.state != ChunkGrid.State.LIQUID and chunk.state != ChunkGrid.State.LOOSE:
 					struct_ok = false
 					break
 			if not struct_ok:

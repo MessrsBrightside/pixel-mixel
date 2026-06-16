@@ -74,16 +74,15 @@ func _init() -> void:
 
 	# Test: loose count matches density approximately
 	grid = ChunkGrid.new(256, 144)
-	params = {"seed": 42, "rng": _make_rng(42), "loose_density": 0.1, "loose_terrain_index": 0}
+	params = {"seed": 42, "rng": _make_rng(42), "loose_density": 0.1, "loose_terrain_index": 1}
 	surface.execute(grid, params)
 	fill.execute(grid, params)
 	var loose := LooseChunkPlugin.new()
 	loose.execute(grid, params)
 	var loose_count := 0
-	for x in range(256):
-		var surface_y: int = params["surface_heights"][x]
-		if surface_y > 0:
-			var chunk = grid.get_chunk(Vector2i(x, surface_y - 1))
+	for y in range(144):
+		for x in range(256):
+			var chunk = grid.get_chunk(Vector2i(x, y))
 			if chunk.state == ChunkGrid.State.LOOSE:
 				loose_count += 1
 	var expected := int(256 * 0.1)
