@@ -7,8 +7,8 @@ const CHUNK_SIZE := 4
 const SPEED := 120.0
 const GRAVITY := 600.0
 const JUMP_VELOCITY := -250.0
-const HITBOX_W := 20.0
-const HITBOX_H := 34.0
+const HITBOX_W := 14.0
+const HITBOX_H := 20.0
 
 var velocity := Vector2.ZERO
 var chunk_grid: ChunkGrid
