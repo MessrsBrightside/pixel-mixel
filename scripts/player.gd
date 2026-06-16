@@ -23,13 +23,15 @@ func _ready() -> void:
 	_idle_sprite = Sprite2D.new()
 	_idle_sprite.texture = load("res://assets/character/idle.png")
 	_idle_sprite.hframes = 2
-	_idle_sprite.offset = Vector2(0, -48)
+	_idle_sprite.centered = false
+	_idle_sprite.offset = Vector2(-16, -96)
 	add_child(_idle_sprite)
 
 	_walk_sprite = Sprite2D.new()
 	_walk_sprite.texture = load("res://assets/character/walk.png")
 	_walk_sprite.hframes = 4
-	_walk_sprite.offset = Vector2(0, -48)
+	_walk_sprite.centered = false
+	_walk_sprite.offset = Vector2(-16, -96)
 	_walk_sprite.visible = false
 	add_child(_walk_sprite)
 
