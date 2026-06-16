@@ -145,6 +145,8 @@ func _is_solid(chunk_pos: Vector2i) -> bool:
 		return false
 	if chunk.state == ChunkGrid.State.LIQUID:
 		return false
+	if chunk.state == ChunkGrid.State.LOOSE:
+		return true  # Loose chunks always block player
 	if terrain_defs.size() > chunk.terrain and terrain_defs[chunk.terrain] != null:
 		return not terrain_defs[chunk.terrain].passable
 	return true
