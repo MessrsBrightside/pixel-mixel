@@ -10,6 +10,7 @@ var _seeds: Array[int] = [42, 99, 256, 1337, 7777]
 var _settling: bool = false
 var _ticks_per_frame: int = 20
 var _label: Label
+var _total_ticks: int = 0
 
 
 func _ready() -> void:
@@ -31,13 +32,15 @@ func _process(_delta: float) -> void:
 	for i in range(_ticks_per_frame):
 		if _simulator.tick(_grid):
 			moved = true
+			_total_ticks += 1
 		else:
 			break
 	_renderer.render()
 	if not moved:
 		_settling = false
-		_label.text = "Seed: %d [settled]" % _renderer.grid.get_size().x  # placeholder
-		_update_label("settled")
+		_update_label("settled (seed %d, %d ticks)" % [_current_seed, _total_ticks])
+	else:
+		_update_label("settling seed %d... tick %d" % [_current_seed, _total_ticks])
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -70,6 +73,7 @@ func _generate(seed_val: int) -> void:
 	_renderer.render()
 
 	_settling = true
+	_total_ticks = 0
 	_update_label("settling... (seed %d)" % seed_val)
 
 

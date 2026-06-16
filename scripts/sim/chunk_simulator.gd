@@ -56,22 +56,67 @@ func _try_fall(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary) -> bool:
 
 
 func _try_spread(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary) -> bool:
+	# Only spread if there's empty space AND empty below that space (seeks lowest point)
 	var left := Vector2i(pos.x - 1, pos.y)
 	var right := Vector2i(pos.x + 1, pos.y)
-	var can_left := _is_empty(grid, left)
-	var can_right := _is_empty(grid, right)
-	if not can_left and not can_right:
-		return false
+	var can_left := _is_empty(grid, left) and _has_floor(grid, left)
+	var can_right := _is_empty(grid, right) and _has_floor(grid, right)
+	# Prefer spreading toward a drop (empty below the target)
+	var drop_left := can_left and _is_empty(grid, Vector2i(pos.x - 1, pos.y + 1))
+	var drop_right := can_right and _is_empty(grid, Vector2i(pos.x + 1, pos.y + 1))
 	var target: Vector2i
-	if can_left and can_right:
+	if drop_left and drop_right:
 		target = left if _rng.randi() % 2 == 0 else right
-	elif can_left:
+	elif drop_left:
 		target = left
-	else:
+	elif drop_right:
 		target = right
+	elif can_left and can_right:
+		# No drop either side — don't spread (prevents oscillation)
+		return false
+	elif can_left:
+		# Only spread if there's a reason (uneven surface)
+		if not _liquid_higher_than_neighbors(grid, pos):
+			return false
+		target = left
+	elif can_right:
+		if not _liquid_higher_than_neighbors(grid, pos):
+			return false
+		target = right
+	else:
+		return false
 	grid.set_chunk(target, chunk.terrain, chunk.color, chunk.state)
 	grid.set_chunk(pos, 0, 0, 0)
 	return true
+
+
+func _has_floor(grid: ChunkGrid, pos: Vector2i) -> bool:
+	var below := Vector2i(pos.x, pos.y + 1)
+	if not grid.is_in_bounds(below):
+		return true  # bottom of world = floor
+	return not _is_empty(grid, below)
+
+
+func _liquid_higher_than_neighbors(grid: ChunkGrid, pos: Vector2i) -> bool:
+	# Check if this liquid column is taller than adjacent — spread to equalize
+	var my_height := _liquid_column_height(grid, pos)
+	var left_h := _liquid_column_height(grid, Vector2i(pos.x - 1, pos.y))
+	var right_h := _liquid_column_height(grid, Vector2i(pos.x + 1, pos.y))
+	return my_height > left_h + 1 or my_height > right_h + 1
+
+
+func _liquid_column_height(grid: ChunkGrid, pos: Vector2i) -> int:
+	var count := 0
+	var y := pos.y
+	while y >= 0:
+		if not grid.is_in_bounds(Vector2i(pos.x, y)):
+			break
+		var c = grid.get_chunk(Vector2i(pos.x, y))
+		if c == null or c.state != ChunkGridClass.State.LIQUID:
+			break
+		count += 1
+		y -= 1
+	return count
 
 
 func _is_empty(grid: ChunkGrid, pos: Vector2i) -> bool:
