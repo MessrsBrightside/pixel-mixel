@@ -26,7 +26,7 @@ func _ready() -> void:
 	_idle_sprite.vframes = 3
 	_idle_sprite.frame = 2  # side row, first frame (row 1 * hframes + col 0)
 	_idle_sprite.centered = false
-	_idle_sprite.offset = Vector2(-16, -32)
+	_idle_sprite.offset = Vector2(-16, -23)
 	add_child(_idle_sprite)
 
 	_walk_sprite = Sprite2D.new()
@@ -35,7 +35,7 @@ func _ready() -> void:
 	_walk_sprite.vframes = 3
 	_walk_sprite.frame = 4  # side row, first frame (row 1 * hframes + col 0)
 	_walk_sprite.centered = false
-	_walk_sprite.offset = Vector2(-16, -32)
+	_walk_sprite.offset = Vector2(-16, -23)
 	_walk_sprite.visible = false
 	add_child(_walk_sprite)
 
