@@ -22,9 +22,17 @@ func simulate_until_settled(grid: ChunkGrid, max_ticks: int = 10000) -> int:
 	return ticks
 
 
+var dirty_min: Vector2i = Vector2i.ZERO
+var dirty_max: Vector2i = Vector2i.ZERO
+var _has_dirty: bool = false
+
+
 func tick(grid: ChunkGrid) -> bool:
 	var moved := false
 	var size := grid.get_size()
+	_has_dirty = false
+	dirty_min = size
+	dirty_max = Vector2i.ZERO
 	# Bottom-to-top (highest y first), left-to-right
 	for y in range(size.y - 1, -1, -1):
 		for x in range(size.x):
@@ -43,20 +51,36 @@ func tick(grid: ChunkGrid) -> bool:
 	return moved
 
 
+func get_dirty_rect() -> Rect2i:
+	if not _has_dirty:
+		return Rect2i()
+	return Rect2i(dirty_min, dirty_max - dirty_min + Vector2i.ONE)
+
+
+func _mark_dirty(pos: Vector2i) -> void:
+	_has_dirty = true
+	dirty_min.x = mini(dirty_min.x, pos.x)
+	dirty_min.y = mini(dirty_min.y, pos.y)
+	dirty_max.x = maxi(dirty_max.x, pos.x)
+	dirty_max.y = maxi(dirty_max.y, pos.y)
+
+
 func _try_fall(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary) -> bool:
 	var below := Vector2i(pos.x, pos.y + 1)
 	if not grid.is_in_bounds(below):
 		return false
 	var below_chunk = grid.get_chunk(below)
 	if below_chunk == null or below_chunk.terrain == 0:
-		# Empty below — fall
 		grid.set_chunk(below, chunk.terrain, chunk.color, chunk.state)
 		grid.set_chunk(pos, 0, 0, 0)
+		_mark_dirty(pos)
+		_mark_dirty(below)
 		return true
-	# Loose chunks sink through liquid (swap positions)
 	if chunk.state == ChunkGridClass.State.LOOSE and below_chunk.state == ChunkGridClass.State.LIQUID:
 		grid.set_chunk(below, chunk.terrain, chunk.color, chunk.state)
 		grid.set_chunk(pos, below_chunk.terrain, below_chunk.color, below_chunk.state)
+		_mark_dirty(pos)
+		_mark_dirty(below)
 		return true
 	return false
 
@@ -93,6 +117,8 @@ func _try_spread(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary) -> bool:
 		return false
 	grid.set_chunk(target, chunk.terrain, chunk.color, chunk.state)
 	grid.set_chunk(pos, 0, 0, 0)
+	_mark_dirty(pos)
+	_mark_dirty(target)
 	return true
 
 

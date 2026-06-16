@@ -18,6 +18,7 @@ var velocity := Vector2.ZERO
 var chunk_grid: ChunkGrid
 var terrain_defs: Array[TerrainDef]
 var on_ground := false
+var _settling_needed := false
 var _blade = BladeAttackClass.new()
 
 var _idle_sprite: Sprite2D
@@ -100,7 +101,15 @@ func _move(delta: float) -> void:
 	if not _collides_at(Vector2(new_x, position.y)):
 		position.x = new_x
 	else:
-		velocity.x = 0.0
+		# Try step-up: can we move there if we go 1 chunk higher?
+		var step_y := position.y - CHUNK_SIZE
+		if on_ground and not _collides_at(Vector2(new_x, step_y)):
+			position.x = new_x
+			position.y = step_y
+		else:
+			# Try pushing loose chunks in movement direction
+			_try_push_loose(new_x)
+			velocity.x = 0.0
 
 	# Vertical
 	var new_y := position.y + velocity.y * delta
@@ -110,11 +119,35 @@ func _move(delta: float) -> void:
 	else:
 		if velocity.y > 0:
 			on_ground = true
-			# Snap to top of solid chunk
 			position.y = _snap_to_ground(position.x, new_y)
 		else:
 			on_ground = false
 		velocity.y = 0.0
+
+
+func _try_push_loose(target_x: float) -> void:
+	## Push any loose chunks adjacent to player in movement direction
+	if chunk_grid == null:
+		return
+	var push_dir := 1 if target_x > position.x else -1
+	var edge_x: float = position.x + (HITBOX_W / 2.0) * push_dir
+	var cx := int(edge_x) / CHUNK_SIZE + push_dir
+	var cy_top := int(position.y - HITBOX_H) / CHUNK_SIZE
+	var cy_bot := int(position.y - 1) / CHUNK_SIZE
+
+	for cy in range(cy_top, cy_bot + 1):
+		var pos := Vector2i(cx, cy)
+		if not chunk_grid.is_in_bounds(pos):
+			continue
+		var chunk = chunk_grid.get_chunk(pos)
+		if chunk.terrain != 0 and chunk.state == ChunkGrid.State.LOOSE:
+			var dest := Vector2i(cx + push_dir, cy)
+			if chunk_grid.is_in_bounds(dest):
+				var dest_chunk = chunk_grid.get_chunk(dest)
+				if dest_chunk.terrain == 0:
+					chunk_grid.set_chunk(dest, chunk.terrain, chunk.color, chunk.state)
+					chunk_grid.set_chunk(pos, 0, 0, 0)
+					_settling_needed = true
 
 
 func _collides_at(pos: Vector2) -> bool:

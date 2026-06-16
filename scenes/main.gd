@@ -11,7 +11,6 @@ var _settling: bool = false
 var _ticks_per_frame: int = 50
 var _label: Label
 var _total_ticks: int = 0
-var _render_frame_count: int = 0
 var _player: Player
 var _camera: Camera2D
 var _parallax_bg: ParallaxBG
@@ -48,6 +47,9 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	if _player._settling_needed:
+		_player._settling_needed = false
+		_settling = true
 	if not _settling:
 		return
 	var moved := false
@@ -58,12 +60,11 @@ func _process(_delta: float) -> void:
 		else:
 			break
 	if moved:
-		_render_frame_count += 1
-		if _render_frame_count % 3 == 0:
-			_renderer.render()
+		var dirty := _simulator.get_dirty_rect()
+		if dirty.size.x > 0:
+			_renderer.mark_dirty_region(dirty)
 	if not moved:
 		_settling = false
-		_renderer.render()
 		_update_label("settled (seed %d, %d ticks)" % [_current_seed, _total_ticks])
 	else:
 		_update_label("settling seed %d... tick %d" % [_current_seed, _total_ticks])
