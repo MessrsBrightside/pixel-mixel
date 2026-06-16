@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#24] Forest Surface biome: noise-based rolling hills, grass/dirt/stone layers, evergreen + maple trees, grass blades, key 7 in main.gd, screenshot, tests
+
 - [#23] Ocean Shore biome: sand beach sloping into water, palm trees, BiomeGenerator, BiomeRegistry, screenshot tool, key 6 in main.gd, terrain_defs expanded to all 9 types
 
 - [#30] Character scale 2.5x, hitbox 16×32, passable chunk collision (terrain_defs-aware _is_solid)

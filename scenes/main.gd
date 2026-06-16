@@ -69,6 +69,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_4: _generate_preset(3)
 			KEY_5: _generate_preset(4)
 			KEY_6: _generate_biome("ocean_shore", 42)
+			KEY_7: _generate_biome("forest_surface", 42)
 			KEY_R: _generate(randi(), {"amplitude": 30, "frequency": 0.02, "base_height": 75, "water_level": 80, "dirt_depth": 14, "loose_density": 0.1})
 			KEY_UP: _ticks_per_frame = mini(_ticks_per_frame * 2, 500)
 			KEY_DOWN: _ticks_per_frame = maxi(_ticks_per_frame / 2, 1)
