@@ -28,8 +28,10 @@ func _ready() -> void:
 	_renderer = ChunkRenderer.new()
 	add_child(_renderer)
 	_character = Sprite2D.new()
-	_character.texture = load("res://assets/character/character_robot_idle.png")
-	_character.scale = Vector2(0.25, 0.25)
+	var tex := load("res://assets/character/idle.png")
+	_character.texture = tex
+	_character.hframes = 2
+	_character.frame = 0
 	_character.z_index = 1
 	add_child(_character)
 	_camera = Camera2D.new()
@@ -110,18 +112,15 @@ func _update_label(status: String) -> void:
 
 
 func _place_character() -> void:
-	# Place at center of world, on the surface
 	var size := _grid.get_size()
 	var cx: int = size.x / 2
-	# Find surface (first non-empty chunk from top)
 	for y in range(size.y):
 		var chunk: Dictionary = _grid.get_chunk(Vector2i(cx, y))
 		if chunk.terrain != 0:
-			# Position character feet at this surface
 			var px: float = cx * 4.0
 			var py: float = y * 4.0
 			_character.position = Vector2(px, py)
-			_character.offset = Vector2(-_character.texture.get_width() / 2.0, -_character.texture.get_height())
+			_character.offset = Vector2(0, -_character.texture.get_height() / _character.hframes)
 			break
 
 

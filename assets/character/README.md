@@ -1,8 +1,10 @@
 # assets/character/
 
-Kenney Toon Characters — Robot sprite set.
-Source: https://kenney.nl/assets/toon-characters
-License: CC0 (public domain)
+Snoblin Pixel RPG Prototype Characters — Default color variant.
+Source: Snoblin (itch.io)
+Sprite sheets: 32×96px per frame.
 
-Used as scale reference during world generation development.
-96×128px per frame, rendered at 0.25× scale (~24×32px in-game).
+- `idle.png` — 2 frames (64×96)
+- `walk.png` — 4 frames (128×96)
+- `hurt.png` — 2 frames (64×96)
+- `death.png` — 3 frames (96×96)
