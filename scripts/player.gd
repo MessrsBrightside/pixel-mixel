@@ -20,13 +20,13 @@ var _facing_right := true
 
 
 func _ready() -> void:
-	scale = Vector2(1.5, 1.5)
 	_idle_sprite = Sprite2D.new()
 	_idle_sprite.texture = load("res://assets/character/idle.png")
 	_idle_sprite.hframes = 2
 	_idle_sprite.vframes = 3
 	_idle_sprite.frame = 2  # side row, first frame (row 1 * hframes + col 0)
 	_idle_sprite.centered = false
+	_idle_sprite.scale = Vector2(1.5, 1.5)
 	_idle_sprite.offset = Vector2(-16, -23)
 	add_child(_idle_sprite)
 
@@ -36,6 +36,7 @@ func _ready() -> void:
 	_walk_sprite.vframes = 3
 	_walk_sprite.frame = 4  # side row, first frame (row 1 * hframes + col 0)
 	_walk_sprite.centered = false
+	_walk_sprite.scale = Vector2(1.5, 1.5)
 	_walk_sprite.offset = Vector2(-16, -23)
 	_walk_sprite.visible = false
 	add_child(_walk_sprite)
