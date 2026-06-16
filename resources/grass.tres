@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="TerrainDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/terrain_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"grass"
+display_name = "Grass"
+palette = Array[Color]([Color(0.196, 0.804, 0.196, 1), Color(0.133, 0.545, 0.133, 1), Color(0.486, 0.988, 0.0, 1), Color(0.0, 0.502, 0.0, 1)])
+density = 0.3
+toughness = 0.2
+passable = true
