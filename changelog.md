@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#23] Ocean Shore biome: sand beach sloping into water, palm trees, BiomeGenerator, BiomeRegistry, screenshot tool, key 6 in main.gd, terrain_defs expanded to all 9 types
+
 - [#30] Character scale 2.5x, hitbox 16×32, passable chunk collision (terrain_defs-aware _is_solid)
 
 - [#22] Add toughness/passable properties to TerrainDef, create 6 new terrain resources (grass, leaves, wood, sand, mushroom, cactus)
