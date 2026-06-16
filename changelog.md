@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#20] Add Player with chunk-grid collision, gravity, jump, horizontal movement, animated sprites; update main scene to use Player with camera follow
+
 - [#8] Add test harness: WorldGenerator, integration tests (determinism, settlement, palette), snapshot regression, run_all_tests.sh
 - [#5] Add generation plugins: SurfaceShape, TerrainFill, WaterPlacement, LooseChunk, Palette — all data-driven, no hardcoded terrain indices
 - [#7] Add ChunkRenderer with palette color fill, static border logic, liquid transparency, and headless tests
