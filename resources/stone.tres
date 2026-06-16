@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="TerrainDef" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/terrain_def.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"stone"
+display_name = "Stone"
+palette = Array[Color]([Color(0.502, 0.502, 0.502, 1), Color(0.627, 0.627, 0.627, 1), Color(0.376, 0.376, 0.376, 1), Color(0.439, 0.439, 0.439, 1)])
+density = 2.5
