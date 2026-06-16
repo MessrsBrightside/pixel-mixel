@@ -2,6 +2,7 @@
 
 ## 2026-06-16
 
+- [#5] Add generation plugins: SurfaceShape, TerrainFill, WaterPlacement, LooseChunk, Palette — all data-driven, no hardcoded terrain indices
 - [#7] Add ChunkRenderer with palette color fill, static border logic, liquid transparency, and headless tests
 - [#6] Add ChunkSimulator with gravity, liquid CA spread, and settlement detection
 - [#4] Add GenerationPlugin base class and PipelineRunner with seeded RNG execution
