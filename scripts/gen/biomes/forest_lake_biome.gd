@@ -9,6 +9,7 @@ const WATER := 3
 const GRASS := 4
 const LEAVES := 5
 const WOOD := 6
+const GRASS_SOLID := 10
 
 
 func execute(grid: ChunkGrid, params: Dictionary) -> void:
@@ -63,8 +64,8 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 			for y in range(water_surface_y, sy):
 				grid.set_chunk(Vector2i(x, y), WATER, 0, ChunkGrid.State.LIQUID)
 		else:
-			# Land: grass top, dirt, then stone
-			grid.set_chunk(Vector2i(x, sy), GRASS, 0, ChunkGrid.State.STATIC)
+			# Land: grass_solid top, dirt, then stone
+			grid.set_chunk(Vector2i(x, sy), GRASS_SOLID, 0, ChunkGrid.State.STATIC)
 			var dirt_end := sy + 14
 			for y in range(sy + 1, mini(dirt_end, size.y)):
 				grid.set_chunk(Vector2i(x, y), DIRT, 0, ChunkGrid.State.STATIC)

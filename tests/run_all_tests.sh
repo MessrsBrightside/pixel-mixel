@@ -17,4 +17,5 @@ godot --headless --script tests/test_forest_lake_biome.gd
 godot --headless --script tests/test_cave_biome.gd
 godot --headless --script tests/test_desert_biome.gd
 godot --headless --script tests/test_safe_spawn.gd
+godot --headless --script tests/test_grass_layers.gd
 echo 'ALL TESTS PASSED'

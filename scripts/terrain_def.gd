@@ -7,3 +7,4 @@ extends Resource
 @export var density: float = 1.0
 @export var toughness: float = 0.5
 @export var passable: bool = false
+@export var foreground: bool = false

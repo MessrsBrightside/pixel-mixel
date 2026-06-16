@@ -11,6 +11,7 @@ const GRASS := 4
 const LEAVES := 5
 const WOOD := 6
 const SAND := 7
+const GRASS_SOLID := 10
 
 
 func execute(grid: ChunkGrid, params: Dictionary) -> void:
@@ -60,16 +61,16 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 		# Replace top sand with dirt
 		for y in range(surface_y, mini(surface_y + 8, size.y)):
 			grid.set_chunk(Vector2i(x, y), DIRT, 0, ChunkGrid.State.STATIC)
-		# Grass on top
+		# Grass solid on top
 		if surface_y > 0:
-			grid.set_chunk(Vector2i(x, surface_y - 1), GRASS, 0, ChunkGrid.State.STATIC)
+			grid.set_chunk(Vector2i(x, surface_y - 1), GRASS_SOLID, 0, ChunkGrid.State.STATIC)
 
-	# Grass at dirt/sand transition
+	# Grass solid at dirt/sand transition
 	for x in range(dirt_zone_end, dirt_zone_end + 5):
 		var t := float(x) / float(water_line_x)
 		var surface_y := beach_start_y + int(t * (water_surface_y - beach_start_y))
 		if surface_y > 0:
-			grid.set_chunk(Vector2i(x, surface_y - 1), GRASS, 0, ChunkGrid.State.STATIC)
+			grid.set_chunk(Vector2i(x, surface_y - 1), GRASS_SOLID, 0, ChunkGrid.State.STATIC)
 
 	# Palm trees on beach (every 30-50 chunks apart)
 	var next_tree_x := dirt_zone_end + 10
