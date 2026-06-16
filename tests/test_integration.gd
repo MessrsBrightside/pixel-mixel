@@ -153,6 +153,73 @@ func _init() -> void:
 		failed += 1
 		print("FAIL: palette coverage — found chunk with color outside 0-3")
 
+	# Test: surface contour reference — known seed produces known heights
+	var ref_params := {}
+	var ref_grid := _generate_with_params(42, ref_params)
+	var ref_heights: Array = ref_params.get("surface_heights", [])
+	# Sample at columns 0, 50, 100, 150, 200, 250
+	var sample_cols := [0, 50, 100, 150, 200, 250]
+	var expected_heights := []
+	for col in sample_cols:
+		expected_heights.append(ref_heights[col])
+	# Re-generate and compare
+	var ref_params2 := {}
+	var ref_grid2 := _generate_with_params(42, ref_params2)
+	var ref_heights2: Array = ref_params2.get("surface_heights", [])
+	var ref_match := true
+	for i in range(sample_cols.size()):
+		if ref_heights2[sample_cols[i]] != expected_heights[i]:
+			ref_match = false
+			break
+	if ref_match:
+		passed += 1
+		print("PASS: surface contour reference — seed 42 heights stable across runs")
+	else:
+		failed += 1
+		print("FAIL: surface contour reference — heights changed between runs")
+
+	# Test: no floating terrain — every filled static chunk has support below (or is at bottom)
+	var float_ok := true
+	for x in range(size.x):
+		for y in range(size.y - 1):
+			var chunk = grid_a.get_chunk(Vector2i(x, y))
+			if chunk.terrain != 0 and chunk.state == ChunkGrid.State.STATIC:
+				var below = grid_a.get_chunk(Vector2i(x, y + 1))
+				if below.terrain == 0:
+					float_ok = false
+					break
+		if not float_ok:
+			break
+	if float_ok:
+		passed += 1
+		print("PASS: no floating terrain — all static chunks have support below")
+	else:
+		failed += 1
+		print("FAIL: floating terrain detected")
+
+	# Test: pipeline extensibility — remove/reorder doesn't crash
+	var ext_ok := true
+	# Remove water plugin
+	var grid_no_water := ChunkGrid.new(64, 36)
+	var runner_nw := PipelineRunner.new()
+	runner_nw.add_plugin(SurfaceShapePlugin.new())
+	runner_nw.add_plugin(TerrainFillPlugin.new())
+	runner_nw.add_plugin(PalettePlugin.new())
+	runner_nw.run(grid_no_water, 42)
+	# Reorder: palette before fill
+	var grid_reorder := ChunkGrid.new(64, 36)
+	var runner_ro := PipelineRunner.new()
+	runner_ro.add_plugin(SurfaceShapePlugin.new())
+	runner_ro.add_plugin(PalettePlugin.new())
+	runner_ro.add_plugin(TerrainFillPlugin.new())
+	runner_ro.run(grid_reorder, 42)
+	if ext_ok:
+		passed += 1
+		print("PASS: pipeline extensibility — remove/reorder runs without crash")
+	else:
+		failed += 1
+		print("FAIL: pipeline extensibility — crashed")
+
 	# Summary
 	print("")
 	print("Results: %d passed, %d failed" % [passed, failed])

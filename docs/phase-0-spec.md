@@ -93,9 +93,15 @@ Proves the system works and catches regressions.
 | Dirt depth | ~3-5 tiles below surface |
 | Water | placed in surface depressions |
 
+### Character movement
+- **Test:** Character stands on terrain surface (not falling through)
+- **Test:** Left/right input moves character horizontally
+- **Test:** Character stops at solid terrain (collision)
+- **Test:** Character falls when no terrain below (gravity)
+- **Test:** Jump input launches character upward, gravity brings them back
+
 ## Out of Scope
 
-- Player character or input
 - Destruction / breaking chunks free during gameplay
 - Conveyor belts, pickup, or any chunk interaction beyond settle physics
 - Dynamic world expansion
