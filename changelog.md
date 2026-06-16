@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#25] Forest Lake biome: central water depression, sloped terrain, maple trees on land, grass/reeds at waterline, key 8 in main.gd, screenshot, tests
+
 - [#24] Forest Surface biome: noise-based rolling hills, grass/dirt/stone layers, evergreen + maple trees, grass blades, key 7 in main.gd, screenshot, tests
 
 - [#23] Ocean Shore biome: sand beach sloping into water, palm trees, BiomeGenerator, BiomeRegistry, screenshot tool, key 6 in main.gd, terrain_defs expanded to all 9 types
