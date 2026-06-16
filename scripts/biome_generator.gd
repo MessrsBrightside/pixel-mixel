@@ -17,4 +17,7 @@ func generate(biome_name: String, seed_val: int) -> ChunkGrid:
 	runner.add_plugin(PalettePlugin.new())
 	runner.run(grid, seed_val)
 
+	var sim := ChunkSimulator.new(seed_val)
+	sim.simulate_until_settled(grid)
+
 	return grid

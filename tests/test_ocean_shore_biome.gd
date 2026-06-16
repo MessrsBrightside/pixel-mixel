@@ -134,6 +134,48 @@ func _init() -> void:
 		failed += 1
 		print("FAIL: no stone found")
 
+	# Test: no LOOSE chunk has LIQUID directly below (sand sank past all water)
+	var loose_above_liquid := 0
+	for y in range(143):
+		for x in range(500):
+			var chunk = grid.get_chunk(Vector2i(x, y))
+			if chunk.terrain != 0 and chunk.state == ChunkGrid.State.LOOSE:
+				var below_chunk = grid.get_chunk(Vector2i(x, y + 1))
+				if below_chunk.state == ChunkGrid.State.LIQUID:
+					loose_above_liquid += 1
+	if loose_above_liquid == 0:
+		passed += 1
+		print("PASS: no LOOSE chunk has LIQUID directly below")
+	else:
+		failed += 1
+		print("FAIL: %d LOOSE chunks still above LIQUID" % loose_above_liquid)
+
+	# Test: sand exists at or below water level (it sank to the floor)
+	var water_surface_y := int(144 * 0.55)  # matches biome code
+	var sand_at_or_below_water := 0
+	for y in range(water_surface_y, 144):
+		for x in range(500):
+			var chunk = grid.get_chunk(Vector2i(x, y))
+			if chunk.terrain == 7:
+				sand_at_or_below_water += 1
+	if sand_at_or_below_water > 0:
+		passed += 1
+		print("PASS: sand exists at/below water level (%d chunks)" % sand_at_or_below_water)
+	else:
+		failed += 1
+		print("FAIL: no sand at or below water level")
+
+	# Test: simulation terminates (BiomeGenerator returns without hanging)
+	var t_start := Time.get_ticks_msec()
+	var _grid3 := gen.generate("ocean_shore", 99)
+	var elapsed := Time.get_ticks_msec() - t_start
+	if elapsed < 30000:
+		passed += 1
+		print("PASS: simulation terminates in %dms" % elapsed)
+	else:
+		failed += 1
+		print("FAIL: simulation took too long (%dms)" % elapsed)
+
 	# Test: BiomeRegistry returns correct plugin
 	var registry := BiomeRegistry.new()
 	var plugin := registry.get_biome("ocean_shore")
