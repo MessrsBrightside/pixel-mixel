@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#26] Cave biome: stone ceiling/floor with noise-varied edges, stalactites, mushrooms, stone pillars, key 9 in main.gd, screenshot, tests
+
 - [#25] Forest Lake biome: central water depression, sloped terrain, maple trees on land, grass/reeds at waterline, key 8 in main.gd, screenshot, tests
 
 - [#24] Forest Surface biome: noise-based rolling hills, grass/dirt/stone layers, evergreen + maple trees, grass blades, key 7 in main.gd, screenshot, tests
