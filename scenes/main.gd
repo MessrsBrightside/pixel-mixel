@@ -12,6 +12,7 @@ var _ticks_per_frame: int = 50
 var _label: Label
 var _total_ticks: int = 0
 var _character: Sprite2D
+var _camera: Camera2D
 
 # Presets: each is [seed, params_dict]
 var _presets: Array = [
@@ -31,6 +32,9 @@ func _ready() -> void:
 	_character.scale = Vector2(0.25, 0.25)
 	_character.z_index = 1
 	add_child(_character)
+	_camera = Camera2D.new()
+	_camera.zoom = Vector2(2, 2)
+	_character.add_child(_camera)
 	_label = Label.new()
 	_label.position = Vector2(4, 4)
 	_label.add_theme_color_override("font_color", Color.WHITE)
