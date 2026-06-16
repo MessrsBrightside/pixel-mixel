@@ -23,15 +23,19 @@ func _ready() -> void:
 	_idle_sprite = Sprite2D.new()
 	_idle_sprite.texture = load("res://assets/character/idle.png")
 	_idle_sprite.hframes = 2
+	_idle_sprite.vframes = 3
+	_idle_sprite.frame = 2  # side row, first frame (row 1 * hframes + col 0)
 	_idle_sprite.centered = false
-	_idle_sprite.offset = Vector2(-16, -96)
+	_idle_sprite.offset = Vector2(-16, -32)
 	add_child(_idle_sprite)
 
 	_walk_sprite = Sprite2D.new()
 	_walk_sprite.texture = load("res://assets/character/walk.png")
 	_walk_sprite.hframes = 4
+	_walk_sprite.vframes = 3
+	_walk_sprite.frame = 4  # side row, first frame (row 1 * hframes + col 0)
 	_walk_sprite.centered = false
-	_walk_sprite.offset = Vector2(-16, -96)
+	_walk_sprite.offset = Vector2(-16, -32)
 	_walk_sprite.visible = false
 	add_child(_walk_sprite)
 
@@ -121,16 +125,19 @@ func _snap_to_ground(px: float, attempted_y: float) -> float:
 
 
 func _update_animation(input_dir: float) -> void:
+	var side_row := 1  # middle row = side-facing
 	if input_dir != 0.0:
 		_facing_right = input_dir > 0.0
 		_idle_sprite.visible = false
 		_walk_sprite.visible = true
-		_walk_sprite.frame = (int(Engine.get_process_frames() / 8)) % 4
+		var walk_frame := (int(Engine.get_process_frames() / 8)) % 4
+		_walk_sprite.frame = side_row * 4 + walk_frame
 		_walk_sprite.flip_h = not _facing_right
 	else:
 		_idle_sprite.visible = true
 		_walk_sprite.visible = false
-		_idle_sprite.frame = (int(Engine.get_process_frames() / 30)) % 2
+		var idle_frame := (int(Engine.get_process_frames() / 30)) % 2
+		_idle_sprite.frame = side_row * 2 + idle_frame
 		_idle_sprite.flip_h = not _facing_right
 
 
