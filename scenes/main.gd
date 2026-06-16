@@ -91,6 +91,7 @@ func _generate_biome(biome_name: String, seed_val: int) -> void:
 	_current_seed = seed_val
 	var gen := BiomeGenerator.new()
 	_grid = gen.generate(biome_name, seed_val)
+	_simulator = ChunkSimulator.new(seed_val)
 	_renderer.grid = _grid
 	_renderer.terrain_defs = _load_terrain_defs()
 	_renderer.render()
@@ -157,4 +158,5 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 
 
 func _on_player_attacked() -> void:
+	_settling = true
 	_renderer.render()
