@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#30] Character scale 2.5x, hitbox 16×32, passable chunk collision (terrain_defs-aware _is_solid)
+
 - [#22] Add toughness/passable properties to TerrainDef, create 6 new terrain resources (grass, leaves, wood, sand, mushroom, cactus)
 
 - [#20] Add Player with chunk-grid collision, gravity, jump, horizontal movement, animated sprites

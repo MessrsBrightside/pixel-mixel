@@ -7,11 +7,12 @@ const CHUNK_SIZE := 4
 const SPEED := 120.0
 const GRAVITY := 600.0
 const JUMP_VELOCITY := -250.0
-const HITBOX_W := 10.0
-const HITBOX_H := 20.0
+const HITBOX_W := 16.0
+const HITBOX_H := 32.0
 
 var velocity := Vector2.ZERO
 var chunk_grid: ChunkGrid
+var terrain_defs: Array[TerrainDef]
 var on_ground := false
 
 var _idle_sprite: Sprite2D
@@ -26,7 +27,7 @@ func _ready() -> void:
 	_idle_sprite.vframes = 3
 	_idle_sprite.frame = 2  # side row, first frame (row 1 * hframes + col 0)
 	_idle_sprite.centered = false
-	_idle_sprite.scale = Vector2(1.5, 1.5)
+	_idle_sprite.scale = Vector2(2.5, 2.5)
 	_idle_sprite.offset = Vector2(-16, -23)
 	add_child(_idle_sprite)
 
@@ -36,7 +37,7 @@ func _ready() -> void:
 	_walk_sprite.vframes = 3
 	_walk_sprite.frame = 4  # side row, first frame (row 1 * hframes + col 0)
 	_walk_sprite.centered = false
-	_walk_sprite.scale = Vector2(1.5, 1.5)
+	_walk_sprite.scale = Vector2(2.5, 2.5)
 	_walk_sprite.offset = Vector2(-16, -23)
 	_walk_sprite.visible = false
 	add_child(_walk_sprite)
@@ -108,7 +109,13 @@ func _is_solid(chunk_pos: Vector2i) -> bool:
 	var chunk: Variant = chunk_grid.get_chunk(chunk_pos)
 	if chunk == null:
 		return true  # OOB = solid (walls)
-	return chunk.terrain != 0 and chunk.state != ChunkGrid.State.LIQUID
+	if chunk.terrain == 0:
+		return false
+	if chunk.state == ChunkGrid.State.LIQUID:
+		return false
+	if terrain_defs.size() > chunk.terrain and terrain_defs[chunk.terrain] != null:
+		return not terrain_defs[chunk.terrain].passable
+	return true
 
 
 func _snap_to_ground(px: float, attempted_y: float) -> float:
