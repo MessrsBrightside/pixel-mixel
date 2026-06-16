@@ -29,6 +29,7 @@ func _ready() -> void:
 	add_child(_renderer)
 	_player = Player.new()
 	_player.z_index = 1
+	_player.attacked.connect(_on_player_attacked)
 	add_child(_player)
 	_camera = Camera2D.new()
 	_camera.zoom = Vector2(2, 2)
@@ -147,3 +148,7 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 	defs[8] = load("res://resources/mushroom.tres")
 	defs[9] = load("res://resources/cactus.tres")
 	return defs
+
+
+func _on_player_attacked() -> void:
+	_renderer.render()

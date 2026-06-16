@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#29] Blade attack destruction system: fan-shaped arc frees chunks based on power vs toughness, left-click input, re-render on attack, before/after screenshots, tests
+
 - [#27] Desert biome: sand dunes with noise, cactus columns with arms, sparse dead grass, stone underground, key 0 in main.gd, screenshot, tests
 
 - [#26] Cave biome: stone ceiling/floor with noise-varied edges, stalactites, mushrooms, stone pillars, key 9 in main.gd, screenshot, tests

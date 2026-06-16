@@ -10,10 +10,15 @@ const JUMP_VELOCITY := -250.0
 const HITBOX_W := 16.0
 const HITBOX_H := 32.0
 
+const BladeAttackClass = preload("res://scripts/blade_attack.gd")
+
+signal attacked
+
 var velocity := Vector2.ZERO
 var chunk_grid: ChunkGrid
 var terrain_defs: Array[TerrainDef]
 var on_ground := false
+var _blade = BladeAttackClass.new()
 
 var _idle_sprite: Sprite2D
 var _walk_sprite: Sprite2D
@@ -60,6 +65,15 @@ func _process(delta: float) -> void:
 
 	_move(delta)
 	_update_animation(input_dir)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if chunk_grid == null:
+			return
+		var dir := (get_global_mouse_position() - global_position).normalized()
+		_blade.execute(chunk_grid, global_position, dir, 3.0, terrain_defs)
+		attacked.emit()
 
 
 func _move(delta: float) -> void:
