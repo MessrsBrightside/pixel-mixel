@@ -71,7 +71,9 @@ func _generate_preset(idx: int) -> void:
 
 func _generate(seed_val: int, params: Dictionary = {}) -> void:
 	_current_seed = seed_val
-	params["water_terrain_index"] = 3  # water gets its own index
+	params["water_terrain_index"] = 3
+	if not params.has("loose_terrain_index"):
+		params["loose_terrain_index"] = 1  # dirt
 	_grid = ChunkGrid.new(256, 144)
 	var runner := PipelineRunner.new()
 	runner.add_plugin(SurfaceShapePlugin.new())
