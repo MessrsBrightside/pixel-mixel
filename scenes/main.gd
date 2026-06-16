@@ -56,7 +56,8 @@ func _process(_delta: float) -> void:
 			_total_ticks += 1
 		else:
 			break
-	_renderer.render()
+	if moved:
+		_renderer.render()
 	if not moved:
 		_settling = false
 		_update_label("settled (seed %d, %d ticks)" % [_current_seed, _total_ticks])
@@ -159,4 +160,5 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 
 func _on_player_attacked() -> void:
 	_settling = true
+	_ticks_per_frame = 5  # fewer ticks during gameplay for responsiveness
 	_renderer.render()
