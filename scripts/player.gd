@@ -40,15 +40,15 @@ func _process(delta: float) -> void:
 	if chunk_grid == null:
 		return
 	var input_dir := 0.0
-	if Input.is_action_pressed("ui_left"):
+	if Input.is_action_pressed("ui_left") or Input.is_key_pressed(KEY_A):
 		input_dir -= 1.0
-	if Input.is_action_pressed("ui_right"):
+	if Input.is_action_pressed("ui_right") or Input.is_key_pressed(KEY_D):
 		input_dir += 1.0
 
 	velocity.x = input_dir * SPEED
 	velocity.y += GRAVITY * delta
 
-	if on_ground and Input.is_action_just_pressed("ui_accept"):
+	if on_ground and (Input.is_action_just_pressed("ui_accept") or Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_SPACE)):
 		velocity.y = JUMP_VELOCITY
 
 	_move(delta)
