@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#40] Run ChunkSimulator after biome generation so sand sinks through water; new tests for settled state
+
 - [#28] Parallax background system: procedural gradient textures per biome, ParallaxBG class, integrated in main.gd, tests
 
 - [#29] Blade attack destruction system: fan-shaped arc frees chunks based on power vs toughness, left-click input, re-render on attack, before/after screenshots, tests

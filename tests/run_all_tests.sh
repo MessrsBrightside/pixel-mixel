@@ -11,4 +11,9 @@ godot --headless --script tests/test_integration.gd
 godot --headless --script tests/test_player.gd
 godot --headless --script tests/test_snapshot.gd
 godot --headless --script tests/test_parallax_bg.gd
+godot --headless --script tests/test_ocean_shore_biome.gd
+godot --headless --script tests/test_forest_surface_biome.gd
+godot --headless --script tests/test_forest_lake_biome.gd
+godot --headless --script tests/test_cave_biome.gd
+godot --headless --script tests/test_desert_biome.gd
 echo 'ALL TESTS PASSED'
