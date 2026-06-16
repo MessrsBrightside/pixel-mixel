@@ -68,6 +68,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_3: _generate_preset(2)
 			KEY_4: _generate_preset(3)
 			KEY_5: _generate_preset(4)
+			KEY_6: _generate_biome("ocean_shore", 42)
 			KEY_R: _generate(randi(), {"amplitude": 30, "frequency": 0.02, "base_height": 75, "water_level": 80, "dirt_depth": 14, "loose_density": 0.1})
 			KEY_UP: _ticks_per_frame = mini(_ticks_per_frame * 2, 500)
 			KEY_DOWN: _ticks_per_frame = maxi(_ticks_per_frame / 2, 1)
@@ -76,6 +77,19 @@ func _unhandled_input(event: InputEvent) -> void:
 func _generate_preset(idx: int) -> void:
 	var preset: Array = _presets[idx]
 	_generate(preset[0], preset[1])
+
+
+func _generate_biome(biome_name: String, seed_val: int) -> void:
+	_current_seed = seed_val
+	var gen := BiomeGenerator.new()
+	_grid = gen.generate(biome_name, seed_val)
+	_renderer.grid = _grid
+	_renderer.terrain_defs = _load_terrain_defs()
+	_renderer.render()
+	_settling = false
+	_total_ticks = 0
+	_update_label("biome: %s (seed %d)" % [biome_name, seed_val])
+	_place_player()
 
 
 func _generate(seed_val: int, params: Dictionary = {}) -> void:
@@ -117,9 +131,15 @@ func _place_player() -> void:
 
 func _load_terrain_defs() -> Array[TerrainDef]:
 	var defs: Array[TerrainDef] = []
-	defs.resize(4)
+	defs.resize(10)
 	defs[0] = null
 	defs[1] = load("res://resources/dirt.tres")
 	defs[2] = load("res://resources/stone.tres")
 	defs[3] = load("res://resources/water.tres")
+	defs[4] = load("res://resources/grass.tres")
+	defs[5] = load("res://resources/leaves.tres")
+	defs[6] = load("res://resources/wood.tres")
+	defs[7] = load("res://resources/sand.tres")
+	defs[8] = load("res://resources/mushroom.tres")
+	defs[9] = load("res://resources/cactus.tres")
 	return defs
