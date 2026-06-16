@@ -4,6 +4,7 @@ extends SceneTree
 
 const PlayerClass = preload("res://scripts/player.gd")
 const ChunkGridClass = preload("res://scripts/chunk_grid.gd")
+const TerrainDef = preload("res://scripts/terrain_def.gd")
 
 
 func _init() -> void:
@@ -119,6 +120,47 @@ func _init() -> void:
 	else:
 		failed += 1
 		print("FAIL: player blocked by liquid, y=%f" % player.position.y)
+
+	# --- Test: player passes through passable terrain chunk ---
+	# Set up terrain_defs with a passable terrain at index 4
+	var passable_def := TerrainDef.new()
+	passable_def.passable = true
+	var solid_def := TerrainDef.new()
+	solid_def.passable = false
+	var defs: Array[TerrainDef] = []
+	defs.resize(5)
+	defs[0] = null
+	defs[1] = solid_def  # dirt-like (non-passable)
+	defs[2] = solid_def  # stone-like (non-passable)
+	defs[3] = null       # water handled by liquid state
+	defs[4] = passable_def  # grass/leaves-like (passable)
+	player.terrain_defs = defs
+	# Place passable chunk at (40, 18) — above ground
+	grid.set_chunk(Vector2i(40, 18), 4, 0, ChunkGridClass.State.STATIC)
+	player.position = Vector2(162, 72)  # chunk 40 area, row 18 level
+	player.velocity = Vector2(0, 100)
+	player.on_ground = false
+	player._move(1.0 / 60.0)
+	if player.position.y > 72.0:
+		passed += 1
+		print("PASS: player passes through passable terrain chunk")
+	else:
+		failed += 1
+		print("FAIL: player blocked by passable chunk, y=%f" % player.position.y)
+
+	# --- Test: player collides with non-passable terrain chunk ---
+	# Place non-passable chunk at (42, 18) — above ground
+	grid.set_chunk(Vector2i(42, 18), 1, 0, ChunkGridClass.State.STATIC)
+	player.position = Vector2(170, 72)  # chunk 42 area, row 18 level
+	player.velocity = Vector2(0, 100)
+	player.on_ground = false
+	player._move(1.0 / 60.0)
+	if player.on_ground or player.position.y == 72.0:
+		passed += 1
+		print("PASS: player collides with non-passable terrain chunk")
+	else:
+		failed += 1
+		print("FAIL: player passed through non-passable chunk, y=%f on_ground=%s" % [player.position.y, str(player.on_ground)])
 
 	# --- Summary ---
 	print("")

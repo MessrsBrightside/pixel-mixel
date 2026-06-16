@@ -109,6 +109,7 @@ func _update_label(status: String) -> void:
 
 func _place_player() -> void:
 	_player.chunk_grid = _grid
+	_player.terrain_defs = _load_terrain_defs()
 	_player.position = _player.find_spawn_position()
 	_player.velocity = Vector2.ZERO
 	_player.on_ground = false
