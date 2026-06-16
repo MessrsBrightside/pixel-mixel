@@ -7,6 +7,7 @@ var _renderer: ChunkRenderer
 var _simulator: ChunkSimulator
 var _grid: ChunkGrid
 var _seeds: Array[int] = [42, 99, 256, 1337, 7777]
+var _current_seed: int = 42
 var _settling: bool = false
 var _ticks_per_frame: int = 20
 var _label: Label
@@ -57,6 +58,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _generate(seed_val: int) -> void:
+	_current_seed = seed_val
 	# Run pipeline only (no simulation yet)
 	_grid = ChunkGrid.new(256, 144)
 	var runner := PipelineRunner.new()
