@@ -48,11 +48,17 @@ func _try_fall(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary) -> bool:
 	if not grid.is_in_bounds(below):
 		return false
 	var below_chunk = grid.get_chunk(below)
-	if below_chunk == null or below_chunk.terrain != 0:
-		return false
-	grid.set_chunk(below, chunk.terrain, chunk.color, chunk.state)
-	grid.set_chunk(pos, 0, 0, 0)
-	return true
+	if below_chunk == null or below_chunk.terrain == 0:
+		# Empty below — fall
+		grid.set_chunk(below, chunk.terrain, chunk.color, chunk.state)
+		grid.set_chunk(pos, 0, 0, 0)
+		return true
+	# Loose chunks sink through liquid (swap positions)
+	if chunk.state == ChunkGridClass.State.LOOSE and below_chunk.state == ChunkGridClass.State.LIQUID:
+		grid.set_chunk(below, chunk.terrain, chunk.color, chunk.state)
+		grid.set_chunk(pos, below_chunk.terrain, below_chunk.color, below_chunk.state)
+		return true
+	return false
 
 
 func _try_spread(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary) -> bool:
