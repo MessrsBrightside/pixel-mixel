@@ -8,6 +8,7 @@ var _biomes: Dictionary = {}
 
 func _init() -> void:
 	_biomes["ocean_shore"] = OceanShoreBiome.new()
+	_biomes["forest_surface"] = ForestSurfaceBiome.new()
 
 
 func get_biome(biome_name: String) -> GenerationPlugin:
