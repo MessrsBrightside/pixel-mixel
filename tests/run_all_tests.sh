@@ -10,4 +10,5 @@ godot --headless --script tests/test_generation_plugins.gd
 godot --headless --script tests/test_integration.gd
 godot --headless --script tests/test_player.gd
 godot --headless --script tests/test_snapshot.gd
+godot --headless --script tests/test_parallax_bg.gd
 echo 'ALL TESTS PASSED'
