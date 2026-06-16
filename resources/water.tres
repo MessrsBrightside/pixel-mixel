@@ -8,5 +8,7 @@ id = &"water"
 display_name = "Water"
 palette = Array[Color]([Color(0.255, 0.412, 0.882, 1), Color(0.118, 0.565, 1.0, 1), Color(0.392, 0.584, 0.929, 1), Color(0.196, 0.333, 0.686, 1)])
 density = 1.0
+toughness = 0.0
+passable = true
 viscosity = 1.0
 transparency = 0.5

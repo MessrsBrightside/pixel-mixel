@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#22] Add toughness/passable properties to TerrainDef, create 6 new terrain resources (grass, leaves, wood, sand, mushroom, cactus)
+
 - [#20] Add Player with chunk-grid collision, gravity, jump, horizontal movement, animated sprites
 - [#19] Close test gaps: surface reference, no floating terrain, pipeline extensibility (55 tests total)
 - Codebase audit: architecture doc, ADRs moved to docs/adr/, READMEs and .why.md for all files
