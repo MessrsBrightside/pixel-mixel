@@ -168,8 +168,83 @@ func find_spawn_position() -> Vector2:
 	if chunk_grid == null:
 		return Vector2.ZERO
 	var size := chunk_grid.get_size()
-	var cx: int = size.x / 2
-	for y in range(size.y):
-		if _is_solid(Vector2i(cx, y)):
-			return Vector2(cx * CHUNK_SIZE + CHUNK_SIZE / 2.0, y * CHUNK_SIZE)
-	return Vector2(cx * CHUNK_SIZE, size.y * CHUNK_SIZE / 2.0)
+	var center: int = size.x / 2
+	var chunks_needed: int = int(ceil(HITBOX_H / float(CHUNK_SIZE)))
+
+	# Scan outward from center column
+	var pos := _find_safe_surface(size, center, chunks_needed, 0, size.y)
+	if pos != Vector2.ZERO:
+		return pos
+
+	# Fallback: scan from middle of grid vertically (cave scenario)
+	var mid_y: int = size.y / 2
+	pos = _find_safe_surface(size, center, chunks_needed, mid_y, size.y)
+	if pos != Vector2.ZERO:
+		return pos
+
+	# Ultimate fallback
+	return Vector2(center * CHUNK_SIZE + CHUNK_SIZE / 2.0, size.y * CHUNK_SIZE / 2.0)
+
+
+func _find_safe_surface(size: Vector2i, center: int, chunks_needed: int, y_start: int, y_end: int) -> Vector2:
+	for offset in range(size.x):
+		var cols: Array[int] = []
+		if offset == 0:
+			cols.append(center)
+		else:
+			if center + offset < size.x:
+				cols.append(center + offset)
+			if center - offset >= 0:
+				cols.append(center - offset)
+		for cx in cols:
+			for y in range(y_start, y_end):
+				var chunk: Variant = chunk_grid.get_chunk(Vector2i(cx, y))
+				if chunk == null:
+					continue
+				# Must be solid and non-liquid
+				if chunk.terrain == 0 or chunk.state == ChunkGrid.State.LIQUID:
+					continue
+				if terrain_defs.size() > chunk.terrain and terrain_defs[chunk.terrain] != null:
+					if terrain_defs[chunk.terrain].passable:
+						continue
+				# Found solid surface — check air above
+				if not _has_clear_air(cx, y, chunks_needed):
+					continue
+				# Check not underwater (no liquid above)
+				if _has_liquid_above(cx, y):
+					continue
+				return Vector2(cx * CHUNK_SIZE + CHUNK_SIZE / 2.0, y * CHUNK_SIZE)
+	return Vector2.ZERO
+
+
+func _has_clear_air(cx: int, surface_y: int, chunks_needed: int) -> bool:
+	for i in range(1, chunks_needed + 1):
+		var check_y: int = surface_y - i
+		if check_y < 0:
+			return true  # Above grid = air
+		var chunk: Variant = chunk_grid.get_chunk(Vector2i(cx, check_y))
+		if chunk == null:
+			return true
+		if chunk.terrain == 0:
+			continue  # Empty = air
+		if chunk.state == ChunkGrid.State.LIQUID:
+			return false  # Liquid in body space = not safe
+		if terrain_defs.size() > chunk.terrain and terrain_defs[chunk.terrain] != null:
+			if terrain_defs[chunk.terrain].passable:
+				continue  # Passable = ok
+		return false  # Solid in body space = not safe
+	return true
+
+
+func _has_liquid_above(cx: int, surface_y: int) -> bool:
+	for y in range(surface_y - 1, -1, -1):
+		var chunk: Variant = chunk_grid.get_chunk(Vector2i(cx, y))
+		if chunk == null:
+			return false
+		if chunk.terrain == 0:
+			continue
+		if chunk.state == ChunkGrid.State.LIQUID:
+			return true
+		# Hit a solid above — no liquid between it and surface
+		return false
+	return false

@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#42] Safe spawn point: scan outward from center, check solid ground + clear air + no underwater, cave fallback
+
 - [#40] Run ChunkSimulator after biome generation so sand sinks through water; new tests for settled state
 
 - [#28] Parallax background system: procedural gradient textures per biome, ParallaxBG class, integrated in main.gd, tests
