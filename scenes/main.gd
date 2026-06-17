@@ -43,7 +43,7 @@ func _ready() -> void:
 	_label.add_theme_font_size_override("font_size", 12)
 	_label.z_index = 2
 	add_child(_label)
-	_generate_preset(0)
+	_generate_biome("ocean_shore", 42)
 
 
 func _process(_delta: float) -> void:
