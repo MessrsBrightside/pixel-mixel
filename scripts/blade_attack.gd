@@ -6,7 +6,8 @@ extends RefCounted
 const RANGE := 15
 const ARC_ANGLE := deg_to_rad(10.0)
 const RAY_COUNT := 3
-const START_OFFSET := 2
+const START_OFFSET := 0
+const KICK_FORCE := 5
 
 
 func execute(grid: ChunkGrid, origin: Vector2, direction: Vector2, power: float, terrain_defs: Array[TerrainDef]) -> int:
@@ -29,8 +30,8 @@ func _cast_ray(grid: ChunkGrid, origin: Vector2, dir: Vector2, power: float, ter
 	var remaining := power
 	var chunk_size := 4.0
 	# Kick direction in chunk units
-	var kick_x := int(sign(dir.x)) * 2
-	var kick_y := int(sign(dir.y))
+	var kick_x := int(sign(dir.x)) * KICK_FORCE
+	var kick_y := int(sign(dir.y)) * (KICK_FORCE / 2)
 
 	for step in range(START_OFFSET, RANGE):
 		var sample := origin + dir * (step + 1) * chunk_size

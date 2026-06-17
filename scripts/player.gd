@@ -72,7 +72,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if chunk_grid == null:
 			return
 		var dir := (get_global_mouse_position() - global_position).normalized()
-		_blade.execute(chunk_grid, global_position, dir, 3.0, terrain_defs)
+		var origin := global_position + Vector2(0, -HITBOX_H / 2.0)
+		_blade.execute(chunk_grid, origin, dir, 3.0, terrain_defs)
 		_show_slash(dir)
 		attacked.emit()
 
@@ -81,11 +82,14 @@ func _show_slash(dir: Vector2) -> void:
 	var slash := Line2D.new()
 	slash.width = 2.0
 	slash.default_color = Color(1, 1, 1, 0.8)
-	# Stab: a narrow line from close to far
-	slash.add_point(dir * 8.0)
-	slash.add_point(dir * 50.0)
+	# Small arc starting from body center
+	var angle := dir.angle()
+	var spread := 0.2
+	for i in range(5):
+		var a := angle - spread + (spread * 2.0 * i / 4.0)
+		slash.add_point(Vector2.from_angle(a) * 50.0)
 	get_parent().add_child(slash)
-	slash.global_position = global_position
+	slash.global_position = global_position + Vector2(0, -HITBOX_H / 2.0)
 	var timer := get_tree().create_timer(0.1)
 	timer.timeout.connect(slash.queue_free)
 
