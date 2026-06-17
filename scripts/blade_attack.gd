@@ -46,8 +46,6 @@ func _cast_ray(grid: ChunkGrid, origin: Vector2, dir: Vector2, power: float, ter
 			break
 		if chunk.terrain == 0 or chunk.state == ChunkGrid.State.LIQUID:
 			continue
-		if chunk.state == ChunkGrid.State.LOOSE:
-			continue
 
 		var tdef: TerrainDef = terrain_defs[chunk.terrain] if chunk.terrain < terrain_defs.size() else null
 		if tdef == null:
