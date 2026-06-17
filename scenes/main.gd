@@ -12,6 +12,7 @@ var _label: Label
 var _player: Player
 var _camera: Camera2D
 var _parallax_bg: ParallaxBG
+var _terrain_collision: TerrainCollision
 
 # Presets: each is [seed, params_dict]
 var _presets: Array = [
@@ -91,6 +92,7 @@ func _generate_biome(biome_name: String, seed_val: int) -> void:
 	_renderer.grid = _grid
 	_renderer.terrain_defs = _load_terrain_defs()
 	_renderer.render()
+	_build_terrain_collision()
 	_update_label("biome: %s (seed %d)" % [biome_name, seed_val])
 	_place_player()
 	_parallax_bg.setup(biome_name)
@@ -115,6 +117,7 @@ func _generate(seed_val: int, params: Dictionary = {}) -> void:
 	_renderer.terrain_defs = _load_terrain_defs()
 	_renderer.render()
 
+	_build_terrain_collision()
 	_update_label("settling... (seed %d)" % seed_val)
 	_place_player()
 	_parallax_bg.setup("default")
@@ -151,3 +154,13 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 
 func _on_player_attacked() -> void:
 	pass
+
+
+func _build_terrain_collision() -> void:
+	if _terrain_collision != null:
+		_terrain_collision.queue_free()
+	_terrain_collision = TerrainCollision.new()
+	_terrain_collision.grid = _grid
+	_terrain_collision.terrain_defs = _load_terrain_defs()
+	add_child(_terrain_collision)
+	_terrain_collision.build_all()
