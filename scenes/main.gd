@@ -11,6 +11,7 @@ var _ticks_per_frame: int = 3
 var _label: Label
 var _player: Player
 var _camera: Camera2D
+var _chunk_spawner: ChunkSpawner
 var _parallax_bg: ParallaxBG
 var _terrain_collision: TerrainCollision
 
@@ -33,6 +34,8 @@ func _ready() -> void:
 	_player.z_index = 1
 	_player.attacked.connect(_on_player_attacked)
 	add_child(_player)
+	_chunk_spawner = ChunkSpawner.new()
+	add_child(_chunk_spawner)
 	_camera = Camera2D.new()
 	_camera.zoom = Vector2(2, 2)
 	_player.add_child(_camera)
@@ -130,6 +133,8 @@ func _update_label(status: String) -> void:
 func _place_player() -> void:
 	_player.chunk_grid = _grid
 	_player.terrain_defs = _load_terrain_defs()
+	_player.chunk_spawner = _chunk_spawner
+	_chunk_spawner.terrain_defs = _load_terrain_defs()
 	_player.position = _player.find_spawn_position()
 	_player.velocity = Vector2.ZERO
 
@@ -152,7 +157,9 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 
 
 func _on_player_attacked() -> void:
-	pass
+	# Rebuild collision and re-render the dirty area
+	_terrain_collision.build_all()
+	_renderer.render()
 
 
 func _build_terrain_collision() -> void:

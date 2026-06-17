@@ -13,6 +13,7 @@ signal attacked
 var chunk_grid: ChunkGrid
 var terrain_defs: Array[TerrainDef]
 var _blade: BladeAttack = BladeAttack.new()
+var chunk_spawner: ChunkSpawner
 
 var _idle_sprite: Sprite2D
 var _walk_sprite: Sprite2D
@@ -74,6 +75,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		var dir := (get_global_mouse_position() - global_position).normalized()
 		var origin := global_position
+		_blade.chunk_spawner = chunk_spawner
+		_blade.spawn_parent = get_parent()
 		_blade.execute(chunk_grid, origin, dir, 3.0, terrain_defs)
 		_show_slash(dir)
 		attacked.emit()
