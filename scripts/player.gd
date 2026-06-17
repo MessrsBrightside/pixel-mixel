@@ -25,6 +25,7 @@ func _ready() -> void:
 	var rect := RectangleShape2D.new()
 	rect.size = Vector2(10, 20)
 	col_shape.shape = rect
+	col_shape.position = Vector2(0, -10)  # shift up so bottom of hitbox = node position
 	add_child(col_shape)
 
 	_idle_sprite = Sprite2D.new()
