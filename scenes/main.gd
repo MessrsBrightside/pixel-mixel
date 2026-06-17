@@ -4,10 +4,8 @@ extends Node2D
 ## Shows world generating and settling in real-time.
 
 var _renderer: ChunkRenderer
-var _simulator: ChunkSimulator
 var _grid: ChunkGrid
 var _current_seed: int = 42
-var _ticks_per_frame: int = 3
 var _label: Label
 var _player: Player
 var _camera: Camera2D
@@ -49,19 +47,7 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if _simulator == null or _grid == null:
-		return
-	_simulator.reset_dirty()
-	var moved := false
-	for i in range(_ticks_per_frame):
-		if _simulator.tick(_grid):
-			moved = true
-		else:
-			break
-	if moved:
-		var dirty := _simulator.get_dirty_rect()
-		if dirty.size.x > 0:
-			_renderer.mark_dirty_region(dirty)
+	pass
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -78,8 +64,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_9: _generate_biome("cave", 42)
 			KEY_0: _generate_biome("desert", 42)
 			KEY_R: _generate(randi(), {"amplitude": 30, "frequency": 0.02, "base_height": 75, "water_level": 80, "dirt_depth": 14, "loose_density": 0.1})
-			KEY_UP: _ticks_per_frame = mini(_ticks_per_frame * 2, 500)
-			KEY_DOWN: _ticks_per_frame = maxi(_ticks_per_frame / 2, 1)
 
 
 func _generate_preset(idx: int) -> void:
@@ -91,7 +75,6 @@ func _generate_biome(biome_name: String, seed_val: int) -> void:
 	_current_seed = seed_val
 	var gen := BiomeGenerator.new()
 	_grid = gen.generate(biome_name, seed_val)
-	_simulator = ChunkSimulator.new(seed_val)
 	_renderer.grid = _grid
 	_renderer.terrain_defs = _load_terrain_defs()
 	_renderer.render()
@@ -115,7 +98,6 @@ func _generate(seed_val: int, params: Dictionary = {}) -> void:
 	runner.add_plugin(PalettePlugin.new())
 	runner.run(_grid, seed_val, params)
 
-	_simulator = ChunkSimulator.new(seed_val)
 	_renderer.grid = _grid
 	_renderer.terrain_defs = _load_terrain_defs()
 	_renderer.render()
@@ -127,7 +109,7 @@ func _generate(seed_val: int, params: Dictionary = {}) -> void:
 
 
 func _update_label(status: String) -> void:
-	_label.text = "%s | ticks/frame: %d (UP/DOWN)" % [status, _ticks_per_frame]
+	_label.text = status
 
 
 func _place_player() -> void:
