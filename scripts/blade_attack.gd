@@ -3,9 +3,10 @@ extends RefCounted
 
 ## Fan-shaped blade attack that frees chunks based on power vs toughness.
 
-const RANGE := 20
-const ARC_ANGLE := deg_to_rad(30.0)
-const RAY_COUNT := 7
+const RANGE := 15
+const ARC_ANGLE := deg_to_rad(10.0)
+const RAY_COUNT := 3
+const START_OFFSET := 2
 
 
 func execute(grid: ChunkGrid, origin: Vector2, direction: Vector2, power: float, terrain_defs: Array[TerrainDef]) -> int:
@@ -31,7 +32,7 @@ func _cast_ray(grid: ChunkGrid, origin: Vector2, dir: Vector2, power: float, ter
 	var kick_x := int(sign(dir.x)) * 2
 	var kick_y := int(sign(dir.y))
 
-	for step in range(RANGE):
+	for step in range(START_OFFSET, RANGE):
 		var sample := origin + dir * (step + 1) * chunk_size
 		var cx := int(sample.x) / 4
 		var cy := int(sample.y) / 4

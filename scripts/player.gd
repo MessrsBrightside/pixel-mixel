@@ -81,16 +81,12 @@ func _show_slash(dir: Vector2) -> void:
 	var slash := Line2D.new()
 	slash.width = 2.0
 	slash.default_color = Color(1, 1, 1, 0.8)
-	# Arc: 5 points in a fan
-	var angle := dir.angle()
-	var spread := 0.5  # radians
-	for i in range(5):
-		var a := angle - spread + (spread * 2.0 * i / 4.0)
-		slash.add_point(Vector2.from_angle(a) * 40.0)
+	# Stab: a narrow line from close to far
+	slash.add_point(dir * 8.0)
+	slash.add_point(dir * 50.0)
 	get_parent().add_child(slash)
 	slash.global_position = global_position
-	# Remove after short time
-	var timer := get_tree().create_timer(0.15)
+	var timer := get_tree().create_timer(0.1)
 	timer.timeout.connect(slash.queue_free)
 
 
