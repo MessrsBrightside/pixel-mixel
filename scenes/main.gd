@@ -12,6 +12,7 @@ var _camera: Camera2D
 var _chunk_spawner: ChunkSpawner
 var _parallax_bg: ParallaxBG
 var _terrain_collision: TerrainCollision
+var _liquid_sim: LiquidSim = LiquidSim.new()
 
 # Presets: each is [seed, params_dict]
 var _presets: Array = [
@@ -47,7 +48,10 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	pass
+	if _grid == null:
+		return
+	if _liquid_sim.tick(_grid):
+		_renderer.render()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -140,14 +144,12 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 
 
 func _on_player_attacked(attack_pos: Vector2) -> void:
-	# Only rebuild the region around the attack, not the whole world
 	var chunk_pos := Vector2i(int(attack_pos.x) / 4, int(attack_pos.y) / 4)
 	var region := Vector2i(chunk_pos.x / 32, chunk_pos.y / 32)
-	# Rebuild this region and neighbors (attack may span boundary)
 	for ry in range(region.y - 1, region.y + 2):
 		for rx in range(region.x - 1, region.x + 2):
 			_terrain_collision.rebuild_region(Vector2i(rx, ry))
-	# Re-render only the dirty area
+	_liquid_sim.mark_dirty(chunk_pos)
 	var dirty := Rect2i(chunk_pos - Vector2i(20, 20), Vector2i(40, 40))
 	_renderer.mark_dirty_region(dirty)
 
