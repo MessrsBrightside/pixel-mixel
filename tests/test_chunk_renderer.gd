@@ -143,24 +143,51 @@ func _init() -> void:
 		failed += 1
 		print("FAIL: adjacent different-terrain chunks missing border")
 
-	# Test: loose chunk has no border
+	# Test: LOOSE chunk has border on all 4 sides
 	grid = ChunkGridClass.new(4, 4)
 	grid.set_chunk(Vector2i(1, 1), 1, 0, ChunkGridClass.State.LOOSE)
 	r = _make_renderer(grid, defs)
 	img = r.render_to_image()
-	var loose_no_border := true
 	px = 1 * CHUNK_PX
 	py = 1 * CHUNK_PX
+	var loose_border_ok := true
 	for i in range(CHUNK_PX):
-		for j in range(CHUNK_PX):
-			if img.get_pixel(px + i, py + j) == Color.BLACK:
-				loose_no_border = false
-	if loose_no_border:
+		if img.get_pixel(px + i, py) != Color.BLACK:
+			loose_border_ok = false
+		if img.get_pixel(px + i, py + CHUNK_PX - 1) != Color.BLACK:
+			loose_border_ok = false
+		if img.get_pixel(px, py + i) != Color.BLACK:
+			loose_border_ok = false
+		if img.get_pixel(px + CHUNK_PX - 1, py + i) != Color.BLACK:
+			loose_border_ok = false
+	if loose_border_ok:
 		passed += 1
-		print("PASS: loose chunk has no border")
+		print("PASS: LOOSE chunk has border on all 4 sides")
 	else:
 		failed += 1
-		print("FAIL: loose chunk has black border pixels")
+		print("FAIL: LOOSE chunk missing border pixels")
+
+	# Test: two adjacent same-terrain LOOSE chunks have border between them
+	grid = ChunkGridClass.new(4, 4)
+	grid.set_chunk(Vector2i(1, 1), 1, 0, ChunkGridClass.State.LOOSE)
+	grid.set_chunk(Vector2i(2, 1), 1, 0, ChunkGridClass.State.LOOSE)
+	r = _make_renderer(grid, defs)
+	img = r.render_to_image()
+	var loose_border_between := true
+	right_edge_x = 1 * CHUNK_PX + CHUNK_PX - 1
+	for i in range(CHUNK_PX):
+		if img.get_pixel(right_edge_x, 1 * CHUNK_PX + i) != Color.BLACK:
+			loose_border_between = false
+	left_edge_x = 2 * CHUNK_PX
+	for i in range(CHUNK_PX):
+		if img.get_pixel(left_edge_x, 1 * CHUNK_PX + i) != Color.BLACK:
+			loose_border_between = false
+	if loose_border_between:
+		passed += 1
+		print("PASS: two adjacent same-terrain LOOSE chunks have border between them")
+	else:
+		failed += 1
+		print("FAIL: adjacent same-terrain LOOSE chunks missing border between them")
 
 	# Summary
 	print("")

@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#55] Loose chunks render with individual borders on all 4 sides (STATIC merges same-terrain, LOOSE never merges)
+
 - [#47] Refactor Player as CharacterBody2D: velocity + move_and_slide, CollisionShape2D child, removed manual AABB collision, TerrainCollision provides world collision
 
 - [#46] Terrain collision generation: StaticBody2D with region-based CollisionShape2D from chunk grid, row-run merging of solid chunks, rebuild per region on destruction

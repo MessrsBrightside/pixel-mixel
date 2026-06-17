@@ -112,6 +112,8 @@ func _render_chunk(x: int, y: int) -> void:
 
 	if state == ChunkGrid.State.STATIC:
 		_draw_borders(img, Vector2i(x, y), px, py, terrain)
+	elif state == ChunkGrid.State.LOOSE:
+		_draw_borders_all(img, px, py)
 
 
 func _draw_borders(img: Image, pos: Vector2i, px: int, py: int, terrain: int) -> void:
@@ -137,3 +139,11 @@ func _draw_borders(img: Image, pos: Vector2i, px: int, py: int, terrain: int) ->
 				3:
 					for i in range(CHUNK_PX):
 						img.set_pixel(px + CHUNK_PX - 1, py + i, BORDER_COLOR)
+
+
+func _draw_borders_all(img: Image, px: int, py: int) -> void:
+	for i in range(CHUNK_PX):
+		img.set_pixel(px + i, py, BORDER_COLOR)
+		img.set_pixel(px + i, py + CHUNK_PX - 1, BORDER_COLOR)
+		img.set_pixel(px, py + i, BORDER_COLOR)
+		img.set_pixel(px + CHUNK_PX - 1, py + i, BORDER_COLOR)
