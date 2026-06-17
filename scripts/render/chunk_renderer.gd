@@ -38,8 +38,10 @@ func render() -> void:
 
 	_bg_tex = ImageTexture.create_from_image(_bg_img)
 	_fg_tex = ImageTexture.create_from_image(_fg_img)
-	_sprite.texture = _bg_tex
-	_fg_sprite.texture = _fg_tex
+	if _sprite != null:
+		_sprite.texture = _bg_tex
+	if _fg_sprite != null:
+		_fg_sprite.texture = _fg_tex
 
 
 func render_dirty() -> void:
