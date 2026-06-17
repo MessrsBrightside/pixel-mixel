@@ -8,7 +8,7 @@ const SPEED := 120.0
 const GRAVITY := 600.0
 const JUMP_VELOCITY := -250.0
 
-signal attacked
+signal attacked(attack_pos: Vector2)
 
 var chunk_grid: ChunkGrid
 var terrain_defs: Array[TerrainDef]
@@ -80,7 +80,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_blade.spawn_parent = get_parent()
 		_blade.execute(chunk_grid, origin, dir, 3.0, terrain_defs)
 		_show_slash(dir)
-		attacked.emit()
+		attacked.emit(origin)
 
 
 func _show_slash(dir: Vector2) -> void:

@@ -138,10 +138,17 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 	return defs
 
 
-func _on_player_attacked() -> void:
-	# Rebuild collision and re-render the dirty area
-	_terrain_collision.build_all()
-	_renderer.render()
+func _on_player_attacked(attack_pos: Vector2) -> void:
+	# Only rebuild the region around the attack, not the whole world
+	var chunk_pos := Vector2i(int(attack_pos.x) / 4, int(attack_pos.y) / 4)
+	var region := Vector2i(chunk_pos.x / 32, chunk_pos.y / 32)
+	# Rebuild this region and neighbors (attack may span boundary)
+	for ry in range(region.y - 1, region.y + 2):
+		for rx in range(region.x - 1, region.x + 2):
+			_terrain_collision.rebuild_region(Vector2i(rx, ry))
+	# Re-render only the dirty area
+	var dirty := Rect2i(chunk_pos - Vector2i(20, 20), Vector2i(40, 40))
+	_renderer.mark_dirty_region(dirty)
 
 
 func _build_terrain_collision() -> void:
