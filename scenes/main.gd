@@ -7,10 +7,8 @@ var _renderer: ChunkRenderer
 var _simulator: ChunkSimulator
 var _grid: ChunkGrid
 var _current_seed: int = 42
-var _settling: bool = false
-var _ticks_per_frame: int = 50
+var _ticks_per_frame: int = 3
 var _label: Label
-var _total_ticks: int = 0
 var _render_frame_count: int = 0
 var _player: Player
 var _camera: Camera2D
@@ -48,33 +46,22 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if _player._settling_needed:
-		_player._settling_needed = false
-		_settling = true
-	if not _settling:
+	if _simulator == null or _grid == null:
 		return
 	var moved := false
 	for i in range(_ticks_per_frame):
 		if _simulator.tick(_grid):
 			moved = true
-			_total_ticks += 1
 		else:
 			break
 	if moved:
-		# Only re-render every 6th frame to stay responsive
 		_render_frame_count += 1
-		if _render_frame_count % 6 == 0:
+		if _render_frame_count % 3 == 0:
 			var dirty := _simulator.get_dirty_rect()
 			if dirty.size.x > 0 and dirty.size.x < 200:
 				_renderer.mark_dirty_region(dirty)
 			else:
 				_renderer.render_dirty()
-	if not moved:
-		_settling = false
-		_renderer.render()
-		_update_label("settled (seed %d, %d ticks)" % [_current_seed, _total_ticks])
-	else:
-		_update_label("settling seed %d... tick %d" % [_current_seed, _total_ticks])
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -108,8 +95,6 @@ func _generate_biome(biome_name: String, seed_val: int) -> void:
 	_renderer.grid = _grid
 	_renderer.terrain_defs = _load_terrain_defs()
 	_renderer.render()
-	_settling = false
-	_total_ticks = 0
 	_update_label("biome: %s (seed %d)" % [biome_name, seed_val])
 	_place_player()
 	_parallax_bg.setup(biome_name)
@@ -134,8 +119,6 @@ func _generate(seed_val: int, params: Dictionary = {}) -> void:
 	_renderer.terrain_defs = _load_terrain_defs()
 	_renderer.render()
 
-	_settling = true
-	_total_ticks = 0
 	_update_label("settling... (seed %d)" % seed_val)
 	_place_player()
 	_parallax_bg.setup("default")
@@ -171,5 +154,4 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 
 
 func _on_player_attacked() -> void:
-	_settling = true
-	_ticks_per_frame = 2
+	pass

@@ -18,7 +18,6 @@ var velocity := Vector2.ZERO
 var chunk_grid: ChunkGrid
 var terrain_defs: Array[TerrainDef]
 var on_ground := false
-var _settling_needed := false
 var _blade = BladeAttackClass.new()
 
 var _idle_sprite: Sprite2D
@@ -147,7 +146,6 @@ func _try_push_loose(target_x: float) -> void:
 				if dest_chunk.terrain == 0:
 					chunk_grid.set_chunk(dest, chunk.terrain, chunk.color, chunk.state)
 					chunk_grid.set_chunk(pos, 0, 0, 0)
-					_settling_needed = true
 
 
 func _collides_at(pos: Vector2) -> bool:
