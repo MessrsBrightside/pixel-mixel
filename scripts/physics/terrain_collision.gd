@@ -10,7 +10,7 @@ const CHUNK_PX := 4
 var grid: ChunkGrid
 var terrain_defs: Array[TerrainDef]
 
-var _region_nodes: Dictionary = {}  # Vector2i -> Node2D
+var _region_shapes: Dictionary = {}  # Vector2i -> Array[CollisionShape2D]
 
 
 func build_all() -> void:
@@ -23,11 +23,12 @@ func build_all() -> void:
 
 
 func rebuild_region(region_pos: Vector2i) -> void:
-	if _region_nodes.has(region_pos):
-		var old: Node2D = _region_nodes[region_pos]
-		remove_child(old)
-		old.free()
-		_region_nodes.erase(region_pos)
+	if _region_shapes.has(region_pos):
+		var shapes: Array = _region_shapes[region_pos]
+		for s in shapes:
+			remove_child(s)
+			s.free()
+		_region_shapes.erase(region_pos)
 	_build_region(region_pos)
 
 
@@ -38,10 +39,7 @@ func _build_region(region_pos: Vector2i) -> void:
 	var x_end := mini(x_start + REGION_SIZE, size.x)
 	var y_end := mini(y_start + REGION_SIZE, size.y)
 
-	var container := Node2D.new()
-	container.name = "region_%d_%d" % [region_pos.x, region_pos.y]
-	add_child(container)
-	_region_nodes[region_pos] = container
+	var shapes: Array = []
 
 	for y in range(y_start, y_end):
 		var run_start := -1
@@ -52,13 +50,15 @@ func _build_region(region_pos: Vector2i) -> void:
 					run_start = x
 			else:
 				if run_start != -1:
-					_add_rect(container, run_start, y, x - run_start)
+					shapes.append(_add_rect(run_start, y, x - run_start))
 					run_start = -1
 		if run_start != -1:
-			_add_rect(container, run_start, y, x_end - run_start)
+			shapes.append(_add_rect(run_start, y, x_end - run_start))
+
+	_region_shapes[region_pos] = shapes
 
 
-func _add_rect(parent: Node2D, cx: int, cy: int, width_chunks: int) -> void:
+func _add_rect(cx: int, cy: int, width_chunks: int) -> CollisionShape2D:
 	var shape := RectangleShape2D.new()
 	shape.size = Vector2(width_chunks * CHUNK_PX, CHUNK_PX)
 	var col := CollisionShape2D.new()
@@ -67,7 +67,8 @@ func _add_rect(parent: Node2D, cx: int, cy: int, width_chunks: int) -> void:
 		cx * CHUNK_PX + (width_chunks * CHUNK_PX) * 0.5,
 		cy * CHUNK_PX + CHUNK_PX * 0.5
 	)
-	parent.add_child(col)
+	add_child(col)
+	return col
 
 
 func _is_collidable(chunk: Dictionary) -> bool:
