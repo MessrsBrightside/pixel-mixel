@@ -113,7 +113,7 @@ func _render_chunk(x: int, y: int) -> void:
 	if state == ChunkGrid.State.STATIC:
 		_draw_borders(img, Vector2i(x, y), px, py, terrain)
 	elif state == ChunkGrid.State.LOOSE:
-		_draw_borders_all(img, px, py)
+		_draw_borders(img, Vector2i(x, y), px, py, terrain)
 
 
 func _draw_borders(img: Image, pos: Vector2i, px: int, py: int, terrain: int) -> void:

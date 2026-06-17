@@ -167,27 +167,24 @@ func _init() -> void:
 		failed += 1
 		print("FAIL: LOOSE chunk missing border pixels")
 
-	# Test: two adjacent same-terrain LOOSE chunks have border between them
+	# Test: two adjacent same-terrain LOOSE chunks merge (no border between them)
 	grid = ChunkGridClass.new(4, 4)
 	grid.set_chunk(Vector2i(1, 1), 1, 0, ChunkGridClass.State.LOOSE)
 	grid.set_chunk(Vector2i(2, 1), 1, 0, ChunkGridClass.State.LOOSE)
 	r = _make_renderer(grid, defs)
 	img = r.render_to_image()
-	var loose_border_between := true
+	var loose_merge_ok := true
 	right_edge_x = 1 * CHUNK_PX + CHUNK_PX - 1
-	for i in range(CHUNK_PX):
-		if img.get_pixel(right_edge_x, 1 * CHUNK_PX + i) != Color.BLACK:
-			loose_border_between = false
-	left_edge_x = 2 * CHUNK_PX
-	for i in range(CHUNK_PX):
-		if img.get_pixel(left_edge_x, 1 * CHUNK_PX + i) != Color.BLACK:
-			loose_border_between = false
-	if loose_border_between:
+	# Check interior pixels only (skip top/bottom border rows)
+	for i in range(1, CHUNK_PX - 1):
+		if img.get_pixel(right_edge_x, 1 * CHUNK_PX + i) == Color.BLACK:
+			loose_merge_ok = false
+	if loose_merge_ok:
 		passed += 1
-		print("PASS: two adjacent same-terrain LOOSE chunks have border between them")
+		print("PASS: adjacent same-terrain LOOSE chunks merge (no border between)")
 	else:
 		failed += 1
-		print("FAIL: adjacent same-terrain LOOSE chunks missing border between them")
+		print("FAIL: adjacent same-terrain LOOSE chunks have unwanted border")
 
 	# Summary
 	print("")
