@@ -67,6 +67,8 @@ func _physics_process(delta: float) -> void:
 		velocity.y = JUMP_VELOCITY
 
 	move_and_slide()
+	if _attack_timer > 0.0:
+		_attack_timer -= delta
 	_update_animation(input_dir)
 
 
@@ -80,6 +82,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_blade.spawn_parent = get_parent()
 		_blade.execute(chunk_grid, origin, dir, 3.0, terrain_defs)
 		_show_slash(dir)
+		_attack_timer = ATTACK_ANIM_DURATION
 		attacked.emit(origin)
 
 
@@ -99,7 +102,19 @@ func _show_slash(dir: Vector2) -> void:
 	timer.timeout.connect(slash.queue_free)
 
 
+var _attack_timer := 0.0
+const ATTACK_ANIM_DURATION := 0.15
+
+
 func _update_animation(input_dir: float) -> void:
+	if _attack_timer > 0.0:
+		# Show hurt/attack frame during attack
+		_idle_sprite.visible = true
+		_walk_sprite.visible = false
+		_idle_sprite.frame = 4  # row 2 (back/attack), frame 0
+		_idle_sprite.flip_h = not _facing_right
+		return
+
 	var side_row := 1
 	if input_dir != 0.0:
 		_facing_right = input_dir > 0.0
