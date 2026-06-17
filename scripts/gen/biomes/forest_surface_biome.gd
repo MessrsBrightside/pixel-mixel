@@ -41,14 +41,14 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 		for y in range(mini(dirt_end, size.y), size.y):
 			grid.set_chunk(Vector2i(x, y), STONE, 0, ChunkGrid.State.STATIC)
 
-	# Place trees (one every 15-25 chunks)
+	# Place trees (one every 40-70 chunks)
 	var next_tree_x := rng.randi_range(5, 15)
-	while next_tree_x < size.x - 3:
+	while next_tree_x < size.x - 6:
 		if rng.randf() < 0.5:
 			_place_evergreen(grid, next_tree_x, surface[next_tree_x], rng)
 		else:
 			_place_maple(grid, next_tree_x, surface[next_tree_x], rng)
-		next_tree_x += rng.randi_range(15, 25)
+		next_tree_x += rng.randi_range(40, 70)
 
 	# Scatter decorative grass blades above solid grass surface
 	for x in range(size.x):
@@ -62,40 +62,55 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 
 
 func _place_evergreen(grid: ChunkGrid, x: int, surface_y: int, rng: RandomNumberGenerator) -> void:
-	var trunk_h := rng.randi_range(5, 8)
+	var trunk_h := rng.randi_range(10, 14)
+	var trunk_w := rng.randi_range(3, 4)
+	var half_trunk := trunk_w / 2
 	# Trunk
 	for i in range(trunk_h):
 		var ty := surface_y - 1 - i
 		if ty >= 0:
-			grid.set_chunk(Vector2i(x, ty), WOOD, 0, ChunkGrid.State.STATIC)
-	# Triangular leaf canopy: 4-5 chunks tall, widest at bottom (~5 wide)
-	var canopy_h := rng.randi_range(4, 5)
+			for tx in range(x - half_trunk, x + half_trunk + 1):
+				if grid.is_in_bounds(Vector2i(tx, ty)):
+					grid.set_chunk(Vector2i(tx, ty), WOOD, 0, ChunkGrid.State.STATIC)
+	# Triangular canopy: 9-11 wide at base tapering to 1-3 at top, 8-12 tall
+	var canopy_h := rng.randi_range(8, 12)
+	var canopy_base_w := rng.randi_range(9, 11)
+	var canopy_top_w := rng.randi_range(1, 3)
 	var canopy_base_y := surface_y - 1 - trunk_h
 	for row in range(canopy_h):
-		var half_w: int = (canopy_h - row) # wider at bottom (row 0)
+		var t := float(row) / float(canopy_h - 1) if canopy_h > 1 else 0.0
+		var row_w: int = int(lerp(float(canopy_top_w), float(canopy_base_w), t))
+		var half_w := row_w / 2
+		var ly := canopy_base_y - (canopy_h - 1 - row)
 		for lx in range(x - half_w, x + half_w + 1):
-			var ly := canopy_base_y - (canopy_h - 1 - row)
 			if grid.is_in_bounds(Vector2i(lx, ly)):
 				grid.set_chunk(Vector2i(lx, ly), LEAVES, 0, ChunkGrid.State.STATIC)
 
 
 func _place_maple(grid: ChunkGrid, x: int, surface_y: int, rng: RandomNumberGenerator) -> void:
-	var trunk_h := rng.randi_range(4, 6)
+	var trunk_h := rng.randi_range(8, 12)
+	var trunk_w := rng.randi_range(3, 5)
+	var half_trunk := trunk_w / 2
 	# Trunk
 	for i in range(trunk_h):
 		var ty := surface_y - 1 - i
 		if ty >= 0:
-			grid.set_chunk(Vector2i(x, ty), WOOD, 0, ChunkGrid.State.STATIC)
-	# Oval/round canopy: ~5 wide, 3-4 tall
-	var canopy_h := rng.randi_range(3, 4)
+			for tx in range(x - half_trunk, x + half_trunk + 1):
+				if grid.is_in_bounds(Vector2i(tx, ty)):
+					grid.set_chunk(Vector2i(tx, ty), WOOD, 0, ChunkGrid.State.STATIC)
+	# Oval/round canopy: 9-13 wide, 6-9 tall, slightly irregular edges
+	var canopy_w := rng.randi_range(9, 13)
+	var canopy_h := rng.randi_range(6, 9)
 	var canopy_top_y := surface_y - 1 - trunk_h - canopy_h + 1
+	var half_cw := canopy_w / 2
 	for row in range(canopy_h):
-		var half_w: int
-		if canopy_h == 3:
-			half_w = [1, 2, 1][row]
-		else:
-			half_w = [1, 2, 2, 1][row]
-		for lx in range(x - half_w, x + half_w + 1):
-			var ly := canopy_top_y + row
+		# Oval shape: widest in middle
+		var t := float(row) / float(canopy_h - 1) if canopy_h > 1 else 0.5
+		var row_half: int = int(float(half_cw) * sin(t * PI))
+		row_half = maxi(row_half, 1)
+		# Irregular edges
+		var jitter := rng.randi_range(-1, 1)
+		var ly := canopy_top_y + row
+		for lx in range(x - row_half + jitter, x + row_half + jitter + 1):
 			if grid.is_in_bounds(Vector2i(lx, ly)):
 				grid.set_chunk(Vector2i(lx, ly), LEAVES, 0, ChunkGrid.State.STATIC)

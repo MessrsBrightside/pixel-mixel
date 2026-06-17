@@ -30,23 +30,33 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 		for y in range(sy + sand_depth, size.y):
 			grid.set_chunk(Vector2i(x, y), STONE, 0, ChunkGrid.State.STATIC)
 
-	# Cactus: every 30-50 chunks, columnar 4-8 tall with occasional arm
-	var next_cactus := rng.randi_range(30, 50)
+	# Cactus: every 40-70 chunks, 3 wide body 6-10 tall with arms
+	var next_cactus := rng.randi_range(40, 70)
 	while next_cactus < size.x:
-		var height := rng.randi_range(4, 8)
+		var height := rng.randi_range(6, 10)
 		var sy := surface[next_cactus]
+		var body_w := 3
+		var half_body := body_w / 2
+		# Main body: 3 wide
 		for i in range(height):
 			var cy := sy - 1 - i
 			if cy >= 0:
-				grid.set_chunk(Vector2i(next_cactus, cy), CACTUS, 0, ChunkGrid.State.STATIC)
-		# Occasional arm (50% chance)
-		if height >= 5 and rng.randf() < 0.5:
+				for bx in range(next_cactus - half_body, next_cactus + half_body + 1):
+					if bx >= 0 and bx < size.x:
+						grid.set_chunk(Vector2i(bx, cy), CACTUS, 0, ChunkGrid.State.STATIC)
+		# Arms: 2 wide, extend 3-4 out from body at varied heights
+		var num_arms := rng.randi_range(1, 3)
+		for _a in range(num_arms):
 			var arm_y := sy - 1 - rng.randi_range(2, height - 2)
 			var arm_dir := -1 if rng.randf() < 0.5 else 1
-			var arm_x := next_cactus + arm_dir
-			if arm_x >= 0 and arm_x < size.x:
-				grid.set_chunk(Vector2i(arm_x, arm_y), CACTUS, 0, ChunkGrid.State.STATIC)
-		next_cactus += rng.randi_range(30, 50)
+			var arm_len := rng.randi_range(3, 4)
+			for ai in range(1, arm_len + 1):
+				var ax := next_cactus + arm_dir * (half_body + ai)
+				if ax >= 0 and ax < size.x:
+					grid.set_chunk(Vector2i(ax, arm_y), CACTUS, 0, ChunkGrid.State.STATIC)
+					if arm_y - 1 >= 0:
+						grid.set_chunk(Vector2i(ax, arm_y - 1), CACTUS, 0, ChunkGrid.State.STATIC)
+		next_cactus += rng.randi_range(40, 70)
 
 	# Sparse dead grass on surface
 	for x in range(size.x):
