@@ -54,11 +54,11 @@ func _try_fall(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary, size: Vector2i
 func _try_spread(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary, size: Vector2i) -> bool:
 	var left := Vector2i(pos.x - 1, pos.y)
 	var right := Vector2i(pos.x + 1, pos.y)
-	var can_left := left.x >= 0 and grid.get_chunk(left).terrain == 0
-	var can_right := right.x < size.x and grid.get_chunk(right).terrain == 0
+	var can_left: bool = left.x >= 0 and grid.get_chunk(left).terrain == 0
+	var can_right: bool = right.x < size.x and grid.get_chunk(right).terrain == 0
 	# Prefer spreading toward a drop
-	var drop_l := can_left and pos.y + 1 < size.y and grid.get_chunk(Vector2i(left.x, pos.y + 1)).terrain == 0
-	var drop_r := can_right and pos.y + 1 < size.y and grid.get_chunk(Vector2i(right.x, pos.y + 1)).terrain == 0
+	var drop_l: bool = can_left and pos.y + 1 < size.y and grid.get_chunk(Vector2i(left.x, pos.y + 1)).terrain == 0
+	var drop_r: bool = can_right and pos.y + 1 < size.y and grid.get_chunk(Vector2i(right.x, pos.y + 1)).terrain == 0
 	var target: Vector2i
 	if drop_l and not drop_r:
 		target = left
