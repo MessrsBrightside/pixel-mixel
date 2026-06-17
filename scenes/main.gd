@@ -9,7 +9,6 @@ var _grid: ChunkGrid
 var _current_seed: int = 42
 var _ticks_per_frame: int = 3
 var _label: Label
-var _render_frame_count: int = 0
 var _player: Player
 var _camera: Camera2D
 var _parallax_bg: ParallaxBG
@@ -48,6 +47,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if _simulator == null or _grid == null:
 		return
+	_simulator.reset_dirty()
 	var moved := false
 	for i in range(_ticks_per_frame):
 		if _simulator.tick(_grid):
@@ -55,13 +55,9 @@ func _process(_delta: float) -> void:
 		else:
 			break
 	if moved:
-		_render_frame_count += 1
-		if _render_frame_count % 3 == 0:
-			var dirty := _simulator.get_dirty_rect()
-			if dirty.size.x > 0 and dirty.size.x < 200:
-				_renderer.mark_dirty_region(dirty)
-			else:
-				_renderer.render_dirty()
+		var dirty := _simulator.get_dirty_rect()
+		if dirty.size.x > 0:
+			_renderer.mark_dirty_region(dirty)
 
 
 func _unhandled_input(event: InputEvent) -> void:

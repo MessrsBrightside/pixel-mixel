@@ -25,14 +25,18 @@ func simulate_until_settled(grid: ChunkGrid, max_ticks: int = 10000) -> int:
 var dirty_min: Vector2i = Vector2i.ZERO
 var dirty_max: Vector2i = Vector2i.ZERO
 var _has_dirty: bool = false
+var grid_size: Vector2i = Vector2i(500, 144)
+
+
+func reset_dirty() -> void:
+	_has_dirty = false
+	dirty_min = grid_size
+	dirty_max = Vector2i.ZERO
 
 
 func tick(grid: ChunkGrid) -> bool:
 	var moved := false
 	var size := grid.get_size()
-	_has_dirty = false
-	dirty_min = size
-	dirty_max = Vector2i.ZERO
 	# Bottom-to-top (highest y first), left-to-right
 	for y in range(size.y - 1, -1, -1):
 		for x in range(size.x):
