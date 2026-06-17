@@ -46,7 +46,7 @@ func _return_to_grid() -> void:
 		var cy := int(global_position.y) / CHUNK_PX
 		var pos := Vector2i(cx, cy)
 		if chunk_grid.is_in_bounds(pos):
-			var existing := chunk_grid.get_chunk(pos)
+			var existing: Dictionary = chunk_grid.get_chunk(pos)
 			if existing.terrain == 0:
 				chunk_grid.set_chunk(pos, terrain_type, color_index, ChunkGrid.State.LOOSE)
 	queue_free()
