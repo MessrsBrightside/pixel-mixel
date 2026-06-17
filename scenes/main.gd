@@ -117,6 +117,7 @@ func _place_player() -> void:
 	_player.terrain_defs = _load_terrain_defs()
 	_player.chunk_spawner = _chunk_spawner
 	_chunk_spawner.terrain_defs = _load_terrain_defs()
+	_chunk_spawner.chunk_grid = _grid
 	_player.position = _player.find_spawn_position()
 	_player.velocity = Vector2.ZERO
 

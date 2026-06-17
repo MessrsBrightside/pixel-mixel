@@ -6,6 +6,7 @@ extends Node
 const LooseChunkBodyScene = preload("res://scripts/physics/loose_chunk_body.gd")
 
 var terrain_defs: Array[TerrainDef]
+var chunk_grid: ChunkGrid
 var max_bodies := 500
 var active_bodies: Array = []
 
@@ -25,8 +26,11 @@ func spawn_chunk(parent: Node, world_pos: Vector2, terrain: int, color_idx: int,
 		if is_instance_valid(oldest):
 			oldest.queue_free()
 
-	var body: RigidBody2D = LooseChunkBodyScene.new()
+	var body: LooseChunkBody = LooseChunkBodyScene.new()
 	body.position = world_pos
+	body.terrain_type = terrain
+	body.color_index = color_idx
+	body.chunk_grid = chunk_grid
 	body.setup(color, 4.0, velocity, mass_val)
 	parent.add_child(body)
 	active_bodies.append(body)
