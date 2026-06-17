@@ -3,8 +3,8 @@ extends RigidBody2D
 
 ## A freed chunk that flies as a RigidBody2D and auto-frees when at rest.
 
-const REST_THRESHOLD := 5.0
-const REST_TIME := 3.0
+const REST_THRESHOLD := 2.0
+const REST_TIME := 10.0
 
 var _rest_timer := 0.0
 
