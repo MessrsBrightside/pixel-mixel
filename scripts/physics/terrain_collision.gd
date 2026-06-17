@@ -74,7 +74,7 @@ func _add_rect(cx: int, cy: int, width_chunks: int) -> CollisionShape2D:
 func _is_collidable(chunk: Dictionary) -> bool:
 	if chunk.terrain == 0:
 		return false
-	if chunk.state == ChunkGrid.State.LIQUID or chunk.state == ChunkGrid.State.LOOSE:
+	if chunk.state == ChunkGrid.State.LIQUID:
 		return false
 	if chunk.terrain > 0 and chunk.terrain < terrain_defs.size():
 		var def: TerrainDef = terrain_defs[chunk.terrain]
