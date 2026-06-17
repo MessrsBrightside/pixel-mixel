@@ -27,7 +27,7 @@ func tick(grid: ChunkGrid) -> bool:
 		for y in range(y1 - 1, y0 - 1, -1):
 			for x in range(x0, x1):
 				var pos := Vector2i(x, y)
-				var chunk := grid.get_chunk(pos)
+				var chunk: Dictionary = grid.get_chunk(pos)
 				if chunk.terrain == 0 or chunk.state != ChunkGrid.State.LIQUID:
 					continue
 				if _try_fall(grid, pos, chunk, size):
@@ -43,7 +43,7 @@ func _try_fall(grid: ChunkGrid, pos: Vector2i, chunk: Dictionary, size: Vector2i
 	var below := Vector2i(pos.x, pos.y + 1)
 	if below.y >= size.y:
 		return false
-	var bc := grid.get_chunk(below)
+	var bc: Dictionary = grid.get_chunk(below)
 	if bc.terrain == 0:
 		grid.set_chunk(below, chunk.terrain, chunk.color, chunk.state)
 		grid.set_chunk(pos, 0, 0, 0)
