@@ -173,4 +173,3 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 func _on_player_attacked() -> void:
 	_settling = true
 	_ticks_per_frame = 2
-	_renderer.render()
