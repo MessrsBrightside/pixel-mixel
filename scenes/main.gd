@@ -13,6 +13,7 @@ var _player: Player
 var _camera: Camera2D
 var _parallax_bg: ParallaxBG
 var _terrain_collision: TerrainCollision
+var _chunk_spawner: ChunkSpawner
 
 # Presets: each is [seed, params_dict]
 var _presets: Array = [
@@ -25,6 +26,9 @@ var _presets: Array = [
 
 
 func _ready() -> void:
+	_chunk_spawner = ChunkSpawner.new()
+	_chunk_spawner.terrain_defs = _load_terrain_defs()
+	add_child(_chunk_spawner)
 	_parallax_bg = ParallaxBG.new()
 	add_child(_parallax_bg)
 	_renderer = ChunkRenderer.new()
@@ -130,9 +134,9 @@ func _update_label(status: String) -> void:
 func _place_player() -> void:
 	_player.chunk_grid = _grid
 	_player.terrain_defs = _load_terrain_defs()
+	_player.chunk_spawner = _chunk_spawner
 	_player.position = _player.find_spawn_position()
 	_player.velocity = Vector2.ZERO
-	_player.on_ground = false
 
 
 func _load_terrain_defs() -> Array[TerrainDef]:

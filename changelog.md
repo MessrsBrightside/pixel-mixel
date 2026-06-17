@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#48] Refactor loose chunks as RigidBody2D: LooseChunkBody physics body with rest timer, ChunkSpawner with max body limit, blade attack spawns physics bodies instead of grid kicks
+
 - [#46] Terrain collision generation: StaticBody2D with region-based CollisionShape2D from chunk grid, row-run merging of solid chunks, rebuild per region on destruction
 
 - [#41] Grass dual-layer: grass_solid (index 10, non-passable) as surface base, decorative grass (index 4) renders in front of player via two-pass renderer with foreground z-ordering

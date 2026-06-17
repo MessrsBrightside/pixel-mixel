@@ -83,31 +83,24 @@ func _init() -> void:
 		failed += 1
 		print("FAIL: unexpected depletion count=%d" % depletion_freed)
 
-	# --- Test: freed chunks are LOOSE state ---
+	# --- Test: freed chunks are cleared from grid ---
 	var grid_state := ChunkGridClass.new(64, 64)
 	for x in range(35, 45):
 		grid_state.set_chunk(Vector2i(x, 32), 2, 0, ChunkGridClass.State.STATIC)
 	var blade5 := BladeAttackClass.new()
 	blade5.execute(grid_state, origin, Vector2.RIGHT, 3.0, defs)
-	var all_loose := true
+	var any_cleared := false
 	for x in range(35, 45):
 		var chunk = grid_state.get_chunk(Vector2i(x, 32))
-		if chunk.terrain == 2 and chunk.state != ChunkGridClass.State.LOOSE:
-			all_loose = false
+		if chunk.terrain == 0:
+			any_cleared = true
 			break
-	# Some chunks should be freed (loose)
-	var any_loose := false
-	for x in range(35, 45):
-		var chunk = grid_state.get_chunk(Vector2i(x, 32))
-		if chunk.state == ChunkGridClass.State.LOOSE:
-			any_loose = true
-			break
-	if any_loose:
+	if any_cleared:
 		passed += 1
-		print("PASS: freed chunks are LOOSE state")
+		print("PASS: freed chunks are cleared from grid")
 	else:
 		failed += 1
-		print("FAIL: no chunks set to LOOSE state")
+		print("FAIL: no chunks cleared from grid")
 
 	# --- Test: empty/liquid chunks don't cost power ---
 	var grid_skip := ChunkGridClass.new(64, 64)
