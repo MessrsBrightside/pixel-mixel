@@ -91,7 +91,7 @@ func _init() -> void:
 		failed += 1
 		print("FAIL: grass_solid should be below decorative grass")
 
-	# Test: player collision — simulate standing on grass_solid
+	# Test: collision — TerrainCollision generates shapes for grass_solid but not decorative grass
 	var test_grid := ChunkGrid.new(10, 20)
 	# Place grass_solid at row 15
 	for x in range(10):
@@ -99,26 +99,37 @@ func _init() -> void:
 	# Place decorative grass at row 14
 	for x in range(10):
 		test_grid.set_chunk(Vector2i(x, 14), GRASS, 0, ChunkGrid.State.STATIC)
-	var player := Player.new()
-	player.chunk_grid = test_grid
-	player.terrain_defs = terrain_defs
-	# Player feet at top of grass_solid row (y = 15*4 = 60)
-	var collides_solid := player._collides_at(Vector2(20.0, 61.0))
-	# Player fully in decorative grass area (feet at row 14 = y=56..59)
-	# Need player top to be inside grid too: top = 57 - 32 = 25 (row 6, empty)
-	var collides_deco := player._collides_at(Vector2(20.0, 57.0))
-	if collides_solid:
+	var tc := TerrainCollision.new()
+	tc.grid = test_grid
+	tc.terrain_defs = terrain_defs
+	root.add_child(tc)
+	tc.build_all()
+	var shape_count := 0
+	for region in tc.get_children():
+		for child in region.get_children():
+			if child is CollisionShape2D:
+				shape_count += 1
+	if shape_count > 0:
 		passed += 1
-		print("PASS: player collides with grass_solid")
+		print("PASS: TerrainCollision generates shapes for grass_solid")
 	else:
 		failed += 1
-		print("FAIL: player should collide with grass_solid")
-	if not collides_deco:
+		print("FAIL: TerrainCollision should generate shapes for grass_solid")
+	var shapes_at_row14 := 0
+	var row14_y_min := 14.0 * 4.0
+	var row14_y_max := 15.0 * 4.0
+	for region in tc.get_children():
+		for child in region.get_children():
+			if child is CollisionShape2D:
+				if child.position.y > row14_y_min and child.position.y < row14_y_max:
+					shapes_at_row14 += 1
+	if shapes_at_row14 == 0:
 		passed += 1
-		print("PASS: player passes through decorative grass")
+		print("PASS: no collision shapes at decorative grass row")
 	else:
 		failed += 1
-		print("FAIL: player should pass through decorative grass")
+		print("FAIL: decorative grass row should have no collision shapes")
+	tc.queue_free()
 
 	# Summary
 	print("")
