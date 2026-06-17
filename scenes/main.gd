@@ -11,6 +11,7 @@ var _settling: bool = false
 var _ticks_per_frame: int = 50
 var _label: Label
 var _total_ticks: int = 0
+var _render_frame_count: int = 0
 var _player: Player
 var _camera: Camera2D
 var _parallax_bg: ParallaxBG
@@ -60,11 +61,17 @@ func _process(_delta: float) -> void:
 		else:
 			break
 	if moved:
-		var dirty := _simulator.get_dirty_rect()
-		if dirty.size.x > 0:
-			_renderer.mark_dirty_region(dirty)
+		# Only re-render every 6th frame to stay responsive
+		_render_frame_count += 1
+		if _render_frame_count % 6 == 0:
+			var dirty := _simulator.get_dirty_rect()
+			if dirty.size.x > 0 and dirty.size.x < 200:
+				_renderer.mark_dirty_region(dirty)
+			else:
+				_renderer.render_dirty()
 	if not moved:
 		_settling = false
+		_renderer.render()
 		_update_label("settled (seed %d, %d ticks)" % [_current_seed, _total_ticks])
 	else:
 		_update_label("settling seed %d... tick %d" % [_current_seed, _total_ticks])
@@ -165,5 +172,5 @@ func _load_terrain_defs() -> Array[TerrainDef]:
 
 func _on_player_attacked() -> void:
 	_settling = true
-	_ticks_per_frame = 5  # fewer ticks during gameplay for responsiveness
+	_ticks_per_frame = 2
 	_renderer.render()

@@ -43,8 +43,7 @@ func render() -> void:
 
 
 func render_dirty() -> void:
-	## Fast update: re-render only chunks that the simulator moved.
-	## Call this instead of render() after small changes.
+	## Just re-upload existing images to GPU (no pixel recalc).
 	if _bg_img == null:
 		render()
 		return
@@ -53,7 +52,10 @@ func render_dirty() -> void:
 
 
 func mark_dirty_region(rect: Rect2i) -> void:
-	## Re-render a rectangular region of chunks (after sim tick or attack).
+	## Re-render a rectangular region of chunks and upload.
+	if _bg_img == null:
+		render()
+		return
 	var x0 := maxi(rect.position.x - 1, 0)
 	var y0 := maxi(rect.position.y - 1, 0)
 	var x1 := mini(rect.end.x + 1, grid.get_size().x)
@@ -62,6 +64,7 @@ func mark_dirty_region(rect: Rect2i) -> void:
 		for x in range(x0, x1):
 			_clear_chunk(x, y)
 			_render_chunk(x, y)
+	# Use set_data to update only — avoids full image copy
 	_bg_tex.update(_bg_img)
 	_fg_tex.update(_fg_img)
 
