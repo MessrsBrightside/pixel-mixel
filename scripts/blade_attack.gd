@@ -12,17 +12,26 @@ var chunk_spawner: ChunkSpawner
 var spawn_parent: Node
 
 
+var _destroyed_positions: Array = []
+
+
 func execute(grid: ChunkGrid, origin: Vector2, direction: Vector2, power: float, terrain_defs: Array[TerrainDef]) -> int:
 	var freed := 0
 	var remaining_power := power
 	var half_arc := ARC_ANGLE / 2.0
 	var base_angle := direction.angle()
+	_destroyed_positions.clear()
 
 	for i in range(RAY_COUNT):
 		var t := float(i) / float(RAY_COUNT - 1)
 		var angle := base_angle - half_arc + t * ARC_ANGLE
 		var ray_dir := Vector2(cos(angle), sin(angle))
 		freed += _cast_ray(grid, origin, ray_dir, remaining_power, terrain_defs, direction)
+
+	# Collapse unsupported structures above destroyed chunks
+	if _destroyed_positions.size() > 0 and chunk_spawner != null:
+		var sc := StructureCollapse.new()
+		sc.check_collapse(grid, _destroyed_positions, chunk_spawner, spawn_parent, terrain_defs)
 
 	return freed
 
@@ -56,6 +65,7 @@ func _cast_ray(grid: ChunkGrid, origin: Vector2, dir: Vector2, power: float, ter
 			remaining -= toughness
 			# Clear from grid
 			grid.set_chunk(pos, 0, 0, 0)
+			_destroyed_positions.append(pos)
 			# Spawn as RigidBody2D with velocity
 			if chunk_spawner != null and spawn_parent != null:
 				var world_pos := Vector2(cx * chunk_size + 2, cy * chunk_size + 2)
