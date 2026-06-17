@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#47] Refactor Player as CharacterBody2D: velocity + move_and_slide, CollisionShape2D child, removed manual AABB collision, TerrainCollision provides world collision
+
 - [#46] Terrain collision generation: StaticBody2D with region-based CollisionShape2D from chunk grid, row-run merging of solid chunks, rebuild per region on destruction
 
 - [#41] Grass dual-layer: grass_solid (index 10, non-passable) as surface base, decorative grass (index 4) renders in front of player via two-pass renderer with foreground z-ordering

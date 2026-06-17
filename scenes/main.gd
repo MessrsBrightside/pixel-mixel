@@ -132,7 +132,6 @@ func _place_player() -> void:
 	_player.terrain_defs = _load_terrain_defs()
 	_player.position = _player.find_spawn_position()
 	_player.velocity = Vector2.ZERO
-	_player.on_ground = false
 
 
 func _load_terrain_defs() -> Array[TerrainDef]:

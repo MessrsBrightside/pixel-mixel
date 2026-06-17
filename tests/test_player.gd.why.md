@@ -1,6 +1,6 @@
 # test_player.gd
 
 - Created: 2026-06-16
-- Intent: Functional tests for Player movement, collision, gravity, jump, and liquid passability
-- Issue: #20
+- Intent: Tests Player CharacterBody2D structure, CollisionShape2D, find_spawn_position, blade attack integration
+- Issue: #47
 - Status: active
