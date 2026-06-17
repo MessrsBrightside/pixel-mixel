@@ -2,6 +2,8 @@
 
 ## 2026-06-16
 
+- [#57] Bigger trees with variety: palm (3w×8-12h trunk, 7-9w fronds), evergreen (3-4w×10-14h trunk, 9-11w triangular canopy), maple (3-5w×8-12h trunk, 9-13w oval canopy), cactus (3w×6-10h body, 2w arms extending 3-4 out). All use rng.randi_range() for variety, spaced 40-70 chunks apart.
+
 - [#55] Loose chunks render with individual borders on all 4 sides (STATIC merges same-terrain, LOOSE never merges)
 
 - [#47] Refactor Player as CharacterBody2D: velocity + move_and_slide, CollisionShape2D child, removed manual AABB collision, TerrainCollision provides world collision

@@ -81,29 +81,36 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 				if ry >= 0:
 					grid.set_chunk(Vector2i(x, ry), GRASS, 0, ChunkGrid.State.STATIC)
 
-	# Maple trees on land portions (every 15-25 chunks, not in water)
+	# Maple trees on land portions (every 40-70 chunks, not in water)
 	var next_tree_x := rng.randi_range(5, 15)
-	while next_tree_x < size.x - 3:
+	while next_tree_x < size.x - 7:
 		if next_tree_x < lake_start - slope_width or next_tree_x > lake_end + slope_width:
 			_place_maple(grid, next_tree_x, surface[next_tree_x], rng)
-		next_tree_x += rng.randi_range(15, 25)
+		next_tree_x += rng.randi_range(40, 70)
 
 
 func _place_maple(grid: ChunkGrid, x: int, surface_y: int, rng: RandomNumberGenerator) -> void:
-	var trunk_h := rng.randi_range(4, 6)
+	var trunk_h := rng.randi_range(8, 12)
+	var trunk_w := rng.randi_range(3, 5)
+	var half_trunk := trunk_w / 2
+	# Trunk
 	for i in range(trunk_h):
 		var ty := surface_y - 1 - i
 		if ty >= 0:
-			grid.set_chunk(Vector2i(x, ty), WOOD, 0, ChunkGrid.State.STATIC)
-	var canopy_h := rng.randi_range(3, 4)
+			for tx in range(x - half_trunk, x + half_trunk + 1):
+				if grid.is_in_bounds(Vector2i(tx, ty)):
+					grid.set_chunk(Vector2i(tx, ty), WOOD, 0, ChunkGrid.State.STATIC)
+	# Oval/round canopy: 9-13 wide, 6-9 tall, slightly irregular edges
+	var canopy_w := rng.randi_range(9, 13)
+	var canopy_h := rng.randi_range(6, 9)
 	var canopy_top_y := surface_y - 1 - trunk_h - canopy_h + 1
+	var half_cw := canopy_w / 2
 	for row in range(canopy_h):
-		var half_w: int
-		if canopy_h == 3:
-			half_w = [1, 2, 1][row]
-		else:
-			half_w = [1, 2, 2, 1][row]
-		for lx in range(x - half_w, x + half_w + 1):
-			var ly := canopy_top_y + row
+		var t := float(row) / float(canopy_h - 1) if canopy_h > 1 else 0.5
+		var row_half: int = int(float(half_cw) * sin(t * PI))
+		row_half = maxi(row_half, 1)
+		var jitter := rng.randi_range(-1, 1)
+		var ly := canopy_top_y + row
+		for lx in range(x - row_half + jitter, x + row_half + jitter + 1):
 			if grid.is_in_bounds(Vector2i(lx, ly)):
 				grid.set_chunk(Vector2i(lx, ly), LEAVES, 0, ChunkGrid.State.STATIC)

@@ -57,11 +57,11 @@ func execute(grid: ChunkGrid, params: Dictionary) -> void:
 	# Palm trees on dry beach
 	var next_tree_x := dirt_zone + 5
 	var dry_limit := _find_water_start(water_surface_y, beach_top_y, ocean_deep_y, size.x)
-	while next_tree_x < dry_limit - 5:
+	while next_tree_x < dry_limit - 10:
 		var t := float(next_tree_x) / float(size.x)
 		var surface_y := beach_top_y + int(t * t * (ocean_deep_y - beach_top_y))
 		_place_palm_tree(grid, next_tree_x, surface_y, rng)
-		next_tree_x += rng.randi_range(30, 50)
+		next_tree_x += rng.randi_range(40, 70)
 
 
 func _find_water_start(water_y: int, beach_top: int, ocean_deep: int, width: int) -> int:
@@ -75,13 +75,30 @@ func _find_water_start(water_y: int, beach_top: int, ocean_deep: int, width: int
 
 
 func _place_palm_tree(grid: ChunkGrid, x: int, surface_y: int, rng: RandomNumberGenerator) -> void:
-	var trunk_height := rng.randi_range(3, 5)
+	var trunk_height := rng.randi_range(8, 12)
+	var trunk_width := 3
+	var half_trunk := trunk_width / 2
+	# Trunk: 3 wide
 	for i in range(trunk_height):
 		var ty := surface_y - 1 - i
 		if ty >= 0:
-			grid.set_chunk(Vector2i(x, ty), WOOD, 0, ChunkGrid.State.STATIC)
+			for tx in range(x - half_trunk, x + half_trunk + 1):
+				if grid.is_in_bounds(Vector2i(tx, ty)):
+					grid.set_chunk(Vector2i(tx, ty), WOOD, 0, ChunkGrid.State.STATIC)
+	# Canopy: drooping fronds, 7-9 wide, 4-5 tall, asymmetric
+	var canopy_w := rng.randi_range(7, 9)
+	var canopy_h := rng.randi_range(4, 5)
 	var top_y := surface_y - 1 - trunk_height
-	for lx in range(x - 1, x + 2):
-		for ly in range(top_y - 1, top_y + 1):
+	var offset_x := rng.randi_range(-1, 1)  # asymmetry
+	var half_cw := canopy_w / 2
+	for row in range(canopy_h):
+		var ly := top_y - (canopy_h - 1 - row)
+		# Fronds droop: top rows narrower, bottom rows wider
+		var row_half: int
+		if row < canopy_h / 2:
+			row_half = half_cw - row  # top narrow
+		else:
+			row_half = half_cw  # bottom full width (drooping)
+		for lx in range(x + offset_x - row_half, x + offset_x + row_half + 1):
 			if grid.is_in_bounds(Vector2i(lx, ly)):
 				grid.set_chunk(Vector2i(lx, ly), LEAVES, 0, ChunkGrid.State.STATIC)
